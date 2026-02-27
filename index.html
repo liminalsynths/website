@@ -42,6 +42,13 @@
         .w-72{ width: 18rem; }
         .max-h-\[78vh\]{ max-height: 78vh; }
 
+        /* Poster-only responsive sizing: keeps readability consistent across desktop/mobile */
+        #poster .w-44{ width: clamp(8rem, 15vmin, 11rem); }
+        #poster .w-56{ width: clamp(9.5rem, 18vmin, 14rem); }
+        #poster .w-60{ width: clamp(10rem, 19vmin, 15rem); }
+        #poster .w-64{ width: clamp(10.5rem, 20vmin, 16rem); }
+        #poster .w-72{ width: clamp(11.5rem, 22vmin, 18rem); }
+
 
         /* 自訂滑鼠游標（SVG/mouse.svg）— 隱藏系統游標，使用 #customCursor 跟隨滑鼠 */
 body, .page, .clickable, button, a, img { cursor: none; }
@@ -64,6 +71,11 @@ body, .page, .clickable, button, a, img { cursor: none; }
         /* 作品牆撥動效果：預設只做輕微 hover，真正的撥動在 JS 針對單張圖片 */
         .floating-img { transition: transform 0.18s ease-out; cursor: pointer; position: absolute; will-change: transform; }
         .floating-img:hover { z-index: 50; }
+
+        /* Poster layouts */
+        #poster{ overflow: hidden; }
+        .poster-desktop{ position: relative; width: 100%; height: 100%; display: block; }
+        .poster-mobile{ display: none; }
 
 
         .landing-logo{ width: min(720px, 80vw); height: auto; display:block; }
@@ -206,16 +218,86 @@ html.is-touch #customCursor{ display:none !important; }
   /* About box: readable on mobile */
   #about .about-box{ width: min(520px, 88vw) !important; padding: 22px !important; font-size: 16px !important; }
 
-  /* Poster assets: scale down a bit for small screens */
-  .w-44{ width: 8.5rem; }
-  .w-56{ width: 10.5rem; }
-  .w-60{ width: 11.25rem; }
-  .w-64{ width: 12rem; }
-  .w-72{ width: 13rem; }
-
   /* Detail layout: stack and fit */
   #detail .small-title{ font-size: 18px; }
   #detail .meta-text{ font-size: 12px; }
+
+  /* Mobile poster: vertical card feed */
+  #poster{
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  #poster .poster-desktop{ display: none; }
+  #poster .poster-mobile{
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  #poster .poster-card{
+    width: 100vw;
+    border: 0;
+    background: #fff;
+    margin: 0;
+    box-sizing: border-box;
+  }
+  #poster .poster-card img{
+    display: block;
+    width: 100vw;
+    height: auto;
+  }
+
+  /* Mobile detail: readable stacked layout */
+  #detail{
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  #detail .w-full.h-full.relative{
+    height: auto;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  #detail .detail-title-wrap,
+  #detail .detail-meta-wrap,
+  #detail .detail-image-wrap{
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+  }
+  #detail .detail-image-wrap{
+    order: 1;
+    display: block !important;
+  }
+  #detail .detail-title-wrap{
+    order: 2;
+    padding: 14px 14px 0;
+    box-sizing: border-box;
+  }
+  #detail .detail-meta-wrap{
+    order: 3;
+    padding: 10px 14px 24px;
+    box-sizing: border-box;
+  }
+  #detail #detailDesc{
+    font-size: 10px;
+    line-height: 1.35;
+  }
+  #detail #detailImage{
+    width: 100vw;
+    max-height: none;
+    height: auto;
+    object-fit: contain;
+  }
 }
 
 /* Desktop-only: About page text + grey box scale down by 0.5 (per request) */
@@ -224,6 +306,32 @@ html.is-touch #customCursor{ display:none !important; }
     transform: scale(0.7);
     transform-origin: center;
   }
+
+  /* Desktop poster sizing: restore collage scale */
+  #poster .w-44{ width: 11rem; }
+  #poster .w-56{ width: 14rem; }
+  #poster .w-60{ width: 15rem; }
+  #poster .w-64{ width: 16rem; }
+  #poster .w-72{ width: 18rem; }
+  #detail #detailDesc{
+    font-size: 10px;
+    line-height: 1.35;
+  }
+
+  /* Desktop poster: per-image upscale to tighten collage density */
+  #poster .poster-desktop > img:nth-child(1){ width: 17rem; }
+  #poster .poster-desktop > img:nth-child(2){ width: 16.5rem; }
+  #poster .poster-desktop > img:nth-child(3){ width: 14rem; }
+  #poster .poster-desktop > img:nth-child(4){ width: 13.5rem; }
+  #poster .poster-desktop > img:nth-child(5){ width: 18.5rem; }
+  #poster .poster-desktop > img:nth-child(6){ width: 22rem; }
+  #poster .poster-desktop > img:nth-child(7){ width: 17rem; }
+  #poster .poster-desktop > img:nth-child(8){ width: 19rem; }
+  #poster .poster-desktop > img:nth-child(9){ width: 19rem; }
+  #poster .poster-desktop > img:nth-child(10){ width: 17rem; }
+  #poster .poster-desktop > img:nth-child(11){ width: 18rem; }
+  #poster .poster-desktop > img:nth-child(12){ width: 14.5rem; }
+  #poster .poster-desktop > img:nth-child(13){ width: 16.5rem; }
 }
 </style>
 </head>
@@ -283,26 +391,41 @@ html.is-touch #customCursor{ display:none !important; }
     <div id="poster" class="page" style="background: white;">
         <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/返回鍵.svg" alt="back" class="back-icon"></div>
 
-        <!-- 對齊檔案二：頁1（大片留白＋散落拼貼） -->
-        <!--
-          Poster works are mapped by the numbering in your PDF (2~14).
-          Each tile opens the shared detail page with its own metadata.
-        -->
-        <img src="image/2.png" class="floating-img w-56" style="top:8%; left:8%;"  onclick="openPoster('mutant')"   alt="mutant">
-        <img src="image/3.jpg" class="floating-img w-56" style="top:22%; left:16%;" onclick="openPoster('melite')"   alt="melite">
-        <img src="image/4.png" class="floating-img w-44" style="top:12%; left:34%;" onclick="openPoster('pearl')"   data-placeholder="pearl"   alt="pearl">
-        <img src="image/5.jpg" class="floating-img w-44" style="top:26%; left:38%;" onclick="openPoster('passion')" data-placeholder="passion" alt="passion">
-        <img src="image/6.png" class="floating-img w-60" style="top:8%; left:50%;"  onclick="openPoster('meteorite')" alt="meteorite">
+        <!-- Desktop: collage -->
+        <div class="poster-desktop">
+            <img src="image/2.png" class="floating-img w-56" style="top:8%; left:8%;"  onclick="openPoster('mutant')"   alt="mutant">
+            <img src="image/3.jpg" class="floating-img w-56" style="top:22%; left:16%;" onclick="openPoster('melite')"   alt="melite">
+            <img src="image/4.png" class="floating-img w-44" style="top:12%; left:34%;" onclick="openPoster('pearl')"   data-placeholder="pearl"   alt="pearl">
+            <img src="image/5.jpg" class="floating-img w-44" style="top:26%; left:38%;" onclick="openPoster('passion')" data-placeholder="passion" alt="passion">
+            <img src="image/6.png" class="floating-img w-60" style="top:8%; left:50%;"  onclick="openPoster('meteorite')" alt="meteorite">
 
-        <img src="image/7.jpg" class="floating-img w-72" style="top:14%; left:64%;" onclick="openPoster('multiboost')" alt="multiboost">
-        <img src="image/8.jpg" class="floating-img w-56" style="top:30%; left:74%;" onclick="openPoster('iridescent')" alt="iridescent">
-        <img src="image/9.jpg" class="floating-img w-64" style="top:46%; left:78%;" onclick="openPoster('born_this_way')" alt="born this way">
+            <img src="image/7.jpg" class="floating-img w-72" style="top:14%; left:64%;" onclick="openPoster('multiboost')" alt="multiboost">
+            <img src="image/8.jpg" class="floating-img w-56" style="top:30%; left:74%;" onclick="openPoster('iridescent')" alt="iridescent">
+            <img src="image/9.jpg" class="floating-img w-64" style="top:46%; left:78%;" onclick="openPoster('born_this_way')" alt="born this way">
 
-        <img src="image/10.jpg" class="floating-img w-64" style="bottom:18%; left:56%;" onclick="openPoster('strike')" alt="strike">
-        <img src="image/11.jpg" class="floating-img w-56" style="bottom:14%; left:36%;" onclick="openPoster('mirror')" alt="mirror">
-        <img src="image/12.jpg" class="floating-img w-60" style="bottom:10%; left:18%;" onclick="openPoster('foray')" alt="foray">
-        <img src="image/13.png" class="floating-img w-44" style="bottom:30%; left:12%;" onclick="openPoster('the_crown')" data-placeholder="the_crown" alt="the crown">
-        <img src="image/14.jpg" class="floating-img w-56" style="bottom:30%; left:70%;" onclick="openPoster('yungboi_harris')" alt="yungboi harris">
+            <img src="image/10.jpg" class="floating-img w-64" style="bottom:18%; left:56%;" onclick="openPoster('strike')" alt="strike">
+            <img src="image/11.jpg" class="floating-img w-56" style="bottom:14%; left:36%;" onclick="openPoster('mirror')" alt="mirror">
+            <img src="image/12.jpg" class="floating-img w-60" style="bottom:10%; left:18%;" onclick="openPoster('foray')" alt="foray">
+            <img src="image/13.png" class="floating-img w-44" style="bottom:30%; left:12%;" onclick="openPoster('the_crown')" data-placeholder="the_crown" alt="the crown">
+            <img src="image/14.jpg" class="floating-img w-56" style="bottom:30%; left:70%;" onclick="openPoster('yungboi_harris')" alt="yungboi harris">
+        </div>
+
+        <!-- Mobile: vertical card feed -->
+        <div class="poster-mobile">
+            <div class="poster-card clickable" onclick="openPoster('mutant')"><img src="image/2.png" alt="mutant"></div>
+            <div class="poster-card clickable" onclick="openPoster('melite')"><img src="image/3.jpg" alt="melite"></div>
+            <div class="poster-card clickable" onclick="openPoster('pearl')"><img src="image/4.png" alt="pearl"></div>
+            <div class="poster-card clickable" onclick="openPoster('passion')"><img src="image/5.jpg" alt="passion"></div>
+            <div class="poster-card clickable" onclick="openPoster('meteorite')"><img src="image/6.png" alt="meteorite"></div>
+            <div class="poster-card clickable" onclick="openPoster('multiboost')"><img src="image/7.jpg" alt="multiboost"></div>
+            <div class="poster-card clickable" onclick="openPoster('iridescent')"><img src="image/8.jpg" alt="iridescent"></div>
+            <div class="poster-card clickable" onclick="openPoster('born_this_way')"><img src="image/9.jpg" alt="born this way"></div>
+            <div class="poster-card clickable" onclick="openPoster('strike')"><img src="image/10.jpg" alt="strike"></div>
+            <div class="poster-card clickable" onclick="openPoster('mirror')"><img src="image/11.jpg" alt="mirror"></div>
+            <div class="poster-card clickable" onclick="openPoster('foray')"><img src="image/12.jpg" alt="foray"></div>
+            <div class="poster-card clickable" onclick="openPoster('the_crown')"><img src="image/13.png" alt="the crown"></div>
+            <div class="poster-card clickable" onclick="openPoster('yungboi_harris')"><img src="image/14.jpg" alt="yungboi harris"></div>
+        </div>
     </div>
 
     <div id="detail" class="page">
@@ -310,16 +433,16 @@ html.is-touch #customCursor{ display:none !important; }
 
         <!-- 對齊檔案二：頁2（左側資訊＋右側大圖） -->
         <div class="w-full h-full relative">
-            <div class="absolute left-24 top-24">
+            <div class="absolute left-24 top-24 detail-title-wrap">
                 <div class="small-title" id="detailTitle">—</div>
             </div>
 
-            <div class="absolute left-24 bottom-24 w-72 space-y-3">
+            <div class="absolute left-24 bottom-24 w-72 space-y-3 detail-meta-wrap">
                 <div class="meta-text" id="detailMeta">—</div>
                 <div class="meta-text" id="detailDesc">—</div>
             </div>
 
-            <div class="absolute right-24 top-24 bottom-24 flex items-center justify-center" style="left: 360px;">
+            <div class="absolute right-24 top-24 bottom-24 flex items-center justify-center detail-image-wrap" style="left: 360px;">
                 <img id="detailImage" src="" class="max-h-[78vh] detail-image" alt="detail image">
             </div>
         </div>
@@ -695,6 +818,7 @@ html.is-touch #customCursor{ display:none !important; }
 
   function initPosterInteraction() {
     if (posterInited) return;
+    if (window.matchMedia('(max-width: 768px)').matches) return;
 
     const poster = document.getElementById('poster');
     if (!poster) return;
