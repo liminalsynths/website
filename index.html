@@ -228,6 +228,12 @@ html.is-touch #customCursor{ display:none !important; }
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
+  #poster .back-arrow{
+    position: fixed;
+    top: max(18px, env(safe-area-inset-top));
+    right: 18px;
+    z-index: 140;
+  }
   #poster .poster-desktop{ display: none; }
   #poster .poster-mobile{
     display: flex;
@@ -275,17 +281,17 @@ html.is-touch #customCursor{ display:none !important; }
     width: 100% !important;
   }
   #detail .detail-image-wrap{
-    order: 1;
+    order: 3;
     display: block !important;
   }
   #detail .detail-title-wrap{
-    order: 2;
-    padding: 14px 14px 0;
+    order: 1;
+    padding: max(18px, env(safe-area-inset-top)) 14px 0;
     box-sizing: border-box;
   }
   #detail .detail-meta-wrap{
-    order: 3;
-    padding: 10px 14px 24px;
+    order: 2;
+    padding: 10px 14px 14px;
     box-sizing: border-box;
   }
   #detail #detailDesc{
@@ -305,6 +311,11 @@ html.is-touch #customCursor{ display:none !important; }
   #about .about-box{
     transform: scale(0.7);
     transform-origin: center;
+    font-size: calc(18px / 0.7);
+  }
+  #contact .meta-text{
+    font-size: 18px !important;
+    line-height: 1.35;
   }
 
   /* Desktop poster sizing: restore collage scale */
@@ -316,6 +327,15 @@ html.is-touch #customCursor{ display:none !important; }
   #detail #detailDesc{
     font-size: 10px;
     line-height: 1.35;
+  }
+  #detail .detail-copy-group{
+    transform: scale(1.5);
+  }
+  #detail .detail-title-wrap.detail-copy-group{
+    transform-origin: top left;
+  }
+  #detail .detail-meta-wrap.detail-copy-group{
+    transform-origin: bottom left;
   }
 
   /* Desktop poster: per-image upscale to tighten collage density */
@@ -369,7 +389,7 @@ html.is-touch #customCursor{ display:none !important; }
     <div id="about" class="page">
         <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/返回鍵.svg" alt="back" class="back-icon"></div>
         <div class="w-full h-full flex items-center justify-center">
-            <div class="about-box bg-gray-200 p-10 text-center text-2xl leading-relaxed" style="width: min(680px, 84vw);">
+            <div class="about-box p-10 text-left text-2xl" style="width: min(680px, 84vw); line-height:1.45; background:transparent;">
                 In the liminal state between<br>
                 medium and concept, synths emerge.<br><br>
                 features visual creations<br>
@@ -380,7 +400,7 @@ html.is-touch #customCursor{ display:none !important; }
 
     <div id="contact" class="page">
         <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/返回鍵.svg" alt="back" class="back-icon"></div>
-        <div class="w-full h-full flex items-center justify-center text-center">
+        <div class="w-full h-full flex items-center justify-center text-left">
             <div>
                 <div class="meta-text" style="font-size:16px;">liminalsynths@gmail.com</div>
                 <div class="meta-text" style="font-size:16px; margin-top:10px;">@liminalsynths</div>
@@ -433,11 +453,11 @@ html.is-touch #customCursor{ display:none !important; }
 
         <!-- 對齊檔案二：頁2（左側資訊＋右側大圖） -->
         <div class="w-full h-full relative">
-            <div class="absolute left-24 top-24 detail-title-wrap">
+            <div class="absolute left-24 top-24 detail-title-wrap detail-copy-group">
                 <div class="small-title" id="detailTitle">—</div>
             </div>
 
-            <div class="absolute left-24 bottom-24 w-72 space-y-3 detail-meta-wrap">
+            <div class="absolute left-24 bottom-24 w-72 space-y-3 detail-meta-wrap detail-copy-group">
                 <div class="meta-text" id="detailMeta">—</div>
                 <div class="meta-text" id="detailDesc">—</div>
             </div>
@@ -477,11 +497,69 @@ html.is-touch #customCursor{ display:none !important; }
   if (isTouch) document.documentElement.classList.add('is-touch');
 
   const pages = document.querySelectorAll('.page');
+  const TYPE_BASE_MS = 500;
+  const TYPE_MIN_TICK = 16;
+  const TYPE_CURSOR_HOLD = 180;
+  const activeTypeTimers = new WeakMap();
+
+  function typeTextNode(node, baseDuration = TYPE_BASE_MS) {
+    if (!node) return;
+    const original = node.nodeValue || '';
+    if (!original.trim()) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) return;
+
+    const prevTimer = activeTypeTimers.get(node);
+    if (prevTimer) window.clearInterval(prevTimer);
+
+    const totalChars = original.length;
+    const tick = Math.max(TYPE_MIN_TICK, Math.floor(baseDuration / Math.max(1, totalChars)));
+    let idx = 0;
+    node.nodeValue = '|';
+
+    const timer = window.setInterval(() => {
+      idx += 1;
+      if (idx >= totalChars) {
+        window.clearInterval(timer);
+        activeTypeTimers.delete(node);
+        node.nodeValue = `${original}|`;
+        window.setTimeout(() => {
+          node.nodeValue = original;
+        }, TYPE_CURSOR_HOLD);
+        return;
+      }
+      node.nodeValue = `${original.slice(0, idx)}|`;
+    }, tick);
+
+    activeTypeTimers.set(node, timer);
+  }
+
+  function typePageText(pageEl) {
+    if (!pageEl) return;
+    const walker = document.createTreeWalker(pageEl, NodeFilter.SHOW_TEXT);
+    const targets = [];
+
+    let node = walker.nextNode();
+    while (node) {
+      const parent = node.parentElement;
+      if (parent && !parent.closest('.back-arrow')) {
+        const tag = parent.tagName;
+        if (tag !== 'SCRIPT' && tag !== 'STYLE') targets.push(node);
+      }
+      node = walker.nextNode();
+    }
+
+    targets.forEach((textNode) => typeTextNode(textNode));
+  }
 
   function goTo(pageId) {
     pages.forEach(p => p.classList.remove('active'));
     const target = document.getElementById(pageId);
-    if (target) target.classList.add('active');
+    if (target) {
+      target.classList.add('active');
+      typePageText(target);
+    }
 
     // Init per-page interactions (lazy)
     if (pageId === 'menu') initMenuSwap();
