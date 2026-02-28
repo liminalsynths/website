@@ -354,7 +354,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   /* allow the UI to breathe on mobile without touching desktop */
   .back-arrow{
     top: var(--back-arrow-y-mobile);
-    left: 50%;
+    left: 80%;
     right: auto;
     transform: translateX(-50%);
   }
@@ -387,6 +387,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   #identity .identity-links-col{
     min-width: 0;
     padding-top: 0;
+    margin-top: 46px;
   }
   #identity .meta-text{
     font-size: 13px !important;
@@ -415,7 +416,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   #poster .back-arrow{
     position: fixed;
     top: var(--back-arrow-y-mobile);
-    left: 50%;
+    left: 80%;
     right: auto;
     transform: translateX(-50%);
     z-index: 140;
@@ -460,7 +461,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   #detail .back-arrow{
     position: fixed;
     top: var(--back-arrow-y-mobile);
-    left: 50%;
+    left: 80%;
     right: auto;
     transform: translateX(-50%);
     z-index: 140;
@@ -669,41 +670,53 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     margin: 0 auto;
     object-fit: cover;
   }
-  /* Desktop override for super power 100: first image shifted left, second stays in place */
+  /* Desktop super power 100: keep first image pinned on left, scroll the rest on right */
   #detail.detail-superpower .w-full.h-full.relative{
-    overflow: visible !important;
+    overflow: hidden !important;
   }
   #detail.detail-superpower .detail-image-wrap{
-    overflow: visible !important;
     display: block !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    left: 37vw !important;
+    right: 13vw !important;
   }
   #detail.detail-superpower .detail-image-stack{
-    position: relative;
+    position: static;
     width: 100%;
-    height: 100%;
+    height: auto;
     overflow: visible;
   }
   #detail.detail-superpower .detail-image-stack img{
-    position: absolute;
+    position: static;
+    display: block;
+    width: min(56vw, 940px) !important;
     height: auto !important;
-    max-width: none !important;
-    max-height: calc(100vh - 72px) !important;
+    max-width: 100% !important;
+    max-height: none !important;
     object-fit: contain !important;
-    margin: 0 !important;
+    margin: 0 auto 14px auto !important;
+    transform: none !important;
   }
   #detail.detail-superpower .detail-image-stack img:first-child{
     position: fixed;
     width: min(34vw, 640px) !important;
+    max-width: none !important;
     left: 20vw;
     top: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) !important;
     z-index: 85;
+    margin: 0 !important;
   }
-  #detail.detail-superpower .detail-image-stack img:nth-child(2){
-    width: min(56vw, 940px) !important;
-    right: -4vw;
-    top: 50%;
-    transform: translateY(-50%);
+  #detail.detail-superpower .detail-image-stack img:last-child{
+    width: auto !important;
+    height: calc(100vh - 48px) !important;
+    max-width: none !important;
+    max-height: none !important;
+    object-fit: contain !important;
+    margin: 0 auto !important;
   }
   #detail #detailImage{
     display: none;
@@ -803,7 +816,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
             <img src="image/works/parallel paradise.png" class="floating-img w-56" style="top:5%; left:24%; width:27rem;" onclick="openPoster('parallel_paradise')" alt="parallel paradise">
             <img src="image/works/fallen angel.png" class="floating-img w-56" style="bottom:32%; left:50%; width:21rem;" onclick="openPoster('fallen_angel')" alt="fallen angel">
             <img src="image/works/stupid.png" class="floating-img w-56" style="bottom:6%; left:34%; width:21rem;" onclick="openPoster('stupid')" alt="stupid">
-            <img src="image/works/ezgif.com-webp-maker.webp" class="floating-img w-44" style="top:54%; left:7%; width:16.5rem;" onclick="openPoster('super_power_100')" alt="super power 100">
+            <img src="image/works/ezgif.com-animated-gif-maker.gif" class="floating-img w-44" style="top:54%; left:7%; width:16.5rem;" onclick="openPoster('super_power_100')" alt="super power 100">
             <img src="image/works/wonderland.png" class="floating-img w-44" style="top:52%; left:61%;" onclick="openPoster('wonderland')" alt="wonderland">
         </div>
 
@@ -829,7 +842,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
                 <div class="poster-card clickable" onclick="openPoster('mirror')"><img src="image/works/mirror/cover.jpg" alt="mirror"></div>
                 <div class="poster-card clickable" onclick="openPoster('iridescent')"><img src="image/works/iridescent/cover.jpg" alt="iridescent"></div>
                 <div class="poster-card clickable" onclick="openPoster('yungboi_harris')"><img src="image/works/yungboi-harris/cover.jpg" alt="yungboi harris"></div>
-                <div class="poster-card clickable" onclick="openPoster('super_power_100')"><img src="image/works/ezgif.com-webp-maker.webp" alt="super power 100"></div>
+                <div class="poster-card clickable" onclick="openPoster('super_power_100')"><img src="image/works/ezgif.com-animated-gif-maker.gif" alt="super power 100"></div>
             </div>
         </div>
     </div>

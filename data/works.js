@@ -173,7 +173,10 @@ window.WORKS_DATA = {
     cover: "image/works/super power 100 inside.png",
     images: [
       "image/works/super power 100 inside.png",
-      "image/works/資產 818@2x.png"
+      "image/works/資產 817.png",
+      "image/works/layout3.png",
+      "image/works/Comp 1_4.gif",
+      "image/works/laser eyes okay.jpg"
     ]
   },
   wonderland: {
