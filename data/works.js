@@ -87,7 +87,11 @@ window.WORKS_DATA = {
     type: "visual poster",
     desc: "playful, colorful discs collide in a digital space, presented through modeling and post-production.",
     cover: "image/works/strike/cover.jpg",
-    images: ["image/works/strike/cover.jpg"]
+    images: [
+      "image/works/strike/cover.jpg",
+      "image/works/strike/cover-01.png",
+      "image/works/strike/cover-02.png"
+    ]
   },
   mirror: {
     no: 11,

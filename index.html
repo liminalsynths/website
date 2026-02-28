@@ -133,6 +133,13 @@ body, .page, .clickable, button, a, img { cursor: none; }
             height: 30px;
             display:block;
         }
+        #poster .back-arrow.poster-diff{
+            mix-blend-mode: difference !important;
+        }
+        #poster .back-arrow.poster-diff .back-icon{
+            mix-blend-mode: normal !important;
+            filter: brightness(0) invert(1) !important;
+        }
         .menu-back-icon{ width: 90px; height: 90px; }
 
         /* 檔案二的陰影字（頁3/頁6） */
@@ -153,6 +160,15 @@ body, .page, .clickable, button, a, img { cursor: none; }
 
         /* 更像檔案二：大量留白、文字不要太粗 */
         .meta-text { font-size: 12px; line-height: 1.35; color: #111; }
+        #identity .about-box{
+            transform: scale(0.7);
+            transform-origin: center;
+            font-size: calc(18px / 0.7);
+        }
+        #identity .meta-text{
+            font-size: 18px;
+            line-height: 1.35;
+        }
         .small-title {
             font-size: 22px;
             font-weight: 600;
@@ -164,12 +180,12 @@ body, .page, .clickable, button, a, img { cursor: none; }
         }
     
         .center-screen{ width:100%; height:100%; min-height:100dvh; display:flex; align-items:center; justify-content:center; }
-        .menu-swap{ position:relative; width:min(720px, 92vw); }
+        .menu-swap{ position:relative; width:min(400px, 52vw); }
         .menu-swap img{ width:100%; height:auto; display:block; user-select:none; -webkit-user-drag:none; }
         .menu-hotspots{
             position:absolute; inset:0;
             display:grid;
-            grid-template-rows: repeat(6, 1fr);
+            grid-template-rows: repeat(3, 1fr);
             background: transparent;
         }
         .menu-hotspot{
@@ -203,6 +219,8 @@ body, .page, .clickable, button, a, img { cursor: none; }
           line-height: 1;
           color: #111;
         }
+        .detail-mobile-info{ display: none; }
+        .detail-image-stack{ display: none; }
 
 
         /* Custom cursor: SVG mouse */
@@ -257,11 +275,8 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   .menu-back-icon{ width: 78px; height: 78px; }
 
   /* Menu scaling (keeps the same design, just fits screen) */
-  .menu-swap{ width: min(560px, 92vw); }
+  .menu-swap{ width: min(310px, 52vw); }
   .menu-link + .menu-link{ margin-top: -12px; }
-
-  /* About box: readable on mobile */
-  #about .about-box{ width: min(520px, 88vw) !important; padding: 22px !important; font-size: 16px !important; }
 
   /* Detail layout: stack and fit */
   #detail .small-title{
@@ -319,17 +334,57 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
+  #detail .back-arrow{
+    position: fixed;
+    top: var(--mobile-back-top);
+    right: var(--mobile-back-right);
+    z-index: 140;
+  }
   #detail .w-full.h-full.relative{
     height: auto;
     min-height: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
+    display: block;
     padding: 0;
     box-sizing: border-box;
   }
+  #detail .detail-mobile-info{
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 130;
+    background: #fff;
+    padding: calc(var(--mobile-back-top) + 2px) 14px 14px;
+    box-sizing: border-box;
+  }
+  #detail .detail-mobile-info .small-title{
+    display: block;
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.18;
+    padding-top: 0.08em;
+    padding-right: calc(var(--mobile-back-size) + 26px);
+    margin-bottom: 0.7em;
+  }
+  #detail .detail-mobile-info .meta-text{
+    font-size: 12px;
+    line-height: 1.22;
+  }
+  #detail #detailMetaMobile{
+    margin-bottom: 1.1em;
+  }
+  #detail #detailDescMobile{
+    margin-bottom: 0;
+  }
+  #detail #detailDescMobile{
+    font-size: 10px;
+    line-height: 1.25;
+  }
   #detail .detail-title-wrap,
-  #detail .detail-meta-wrap,
+  #detail .detail-meta-wrap{
+    display: none !important;
+  }
   #detail .detail-image-wrap{
     position: static !important;
     left: auto !important;
@@ -337,45 +392,28 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     top: auto !important;
     bottom: auto !important;
     width: 100% !important;
-  }
-  #detail .detail-image-wrap{
-    order: 3;
     display: block !important;
+    margin-top: var(--detail-mobile-info-h, 120px);
   }
-  #detail .detail-title-wrap{
-    order: 1;
-    padding: var(--mobile-back-top) 14px 0;
-    box-sizing: border-box;
+  #detail .detail-image-stack{
+    display: block;
+    width: 100vw;
   }
-  #detail .detail-meta-wrap{
-    order: 2;
-    padding: 10px 14px 14px;
-    box-sizing: border-box;
-  }
-  #detail #detailDesc{
-    font-size: 10px;
-    line-height: 1.35;
+  #detail .detail-image-stack img{
+    display: block;
+    width: 100vw;
+    height: auto;
   }
   #detail #detailImage{
-    width: 100vw;
-    max-height: none;
-    height: auto;
-    object-fit: contain;
+    display: none;
+  }
+  #detail .detail-gallery-nav{
+    display: none !important;
   }
 }
 
-/* Desktop-only: About page text + grey box scale down by 0.5 (per request) */
+/* Desktop-only rules */
 @media (min-width: 769px){
-  #about .about-box{
-    transform: scale(0.7);
-    transform-origin: center;
-    font-size: calc(18px / 0.7);
-  }
-  #contact .meta-text{
-    font-size: 18px !important;
-    line-height: 1.35;
-  }
-
   /* Desktop poster sizing: restore collage scale */
   #poster .w-44{ width: 11rem; }
   #poster .w-56{ width: 14rem; }
@@ -443,18 +481,31 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     right: 16vw !important;
     top: 24px !important;
     bottom: 24px !important;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+    display: block !important;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
-  #detail #detailImage{
+  #detail .detail-image-stack{
     display: block;
     width: 100%;
-    height: 100%;
+    line-height: 0;
+  }
+  #detail .detail-image-stack img{
+    display: block;
+    width: auto;
+    height: auto;
     max-width: 100%;
-    max-height: 100%;
+    max-height: calc(100vh - 48px);
+    margin: 0 auto;
     object-fit: contain;
+  }
+  #detail #detailImage{
+    display: none;
+  }
+  #detail .detail-gallery-nav{
+    display: none !important;
   }
   /* Desktop poster: per-image upscale to tighten collage density */
   #poster .poster-desktop > img:nth-child(1){ width: 17rem; }
@@ -491,43 +542,36 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
 
     <div class="center-screen">
         <div class="menu-swap">
-            <img id="menuSvg" src="SVG/original.svg" alt="menu" draggable="false"/>
+            <img id="menuSvg" src="SVG/資產 17.svg" alt="menu" draggable="false"/>
             <div class="menu-hotspots" aria-label="menu hotspots">
-                <button class="menu-hotspot" data-src="SVG/about.svg" data-target="about" aria-label="about"></button>
-                <button class="menu-hotspot" data-src="SVG/contact.svg" data-target="contact" aria-label="contact"></button>
-                <button class="menu-hotspot" data-src="SVG/poster.svg" data-target="poster" aria-label="poster"></button>
-                <button class="menu-hotspot" data-src="SVG/typographic.svg" data-target="typographic" aria-label="typographic"></button>
-                <button class="menu-hotspot" data-src="SVG/illustration.svg" data-target="illustration" aria-label="illustration"></button>
-                <button class="menu-hotspot" data-src="SVG/project.svg" data-target="project" aria-label="project"></button>
+                <button class="menu-hotspot" data-src="SVG/資產 16.svg" data-target="identity" aria-label="identity"></button>
+                <button class="menu-hotspot" data-src="SVG/資產 15.svg" data-target="poster" aria-label="graphic"></button>
+                <button class="menu-hotspot" data-src="SVG/資產 14.svg" data-target="project" aria-label="motion"></button>
             </div>
         </div>
     </div>
 </div>
 
-    <div id="about" class="page">
+    <div id="identity" class="page">
         <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/返回鍵.svg" alt="back" class="back-icon"></div>
         <div class="w-full h-full flex items-center justify-center">
             <div class="about-box p-10 text-left text-2xl" style="width: min(680px, 84vw); line-height:1.45; background:transparent;">
                 In the liminal state between<br>
                 medium and concept, synths emerge.<br><br>
                 features visual creations<br>
-                in various forms.
-            </div>
-        </div>
-    </div>
-
-    <div id="contact" class="page">
-        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/返回鍵.svg" alt="back" class="back-icon"></div>
-        <div class="w-full h-full flex items-center justify-center text-left">
-            <div>
-                <div class="meta-text" style="font-size:16px;">liminalsynths@gmail.com</div>
-                <div class="meta-text" style="font-size:16px; margin-top:10px;">@liminalsynths</div>
+                in various forms.<br><br><br>
+                <div class="meta-text">
+                    <a href="mailto:liminalsynths@gmail.com" class="clickable" style="color:inherit; text-decoration:none;">liminalsynths@gmail.com</a>
+                </div>
+                <div class="meta-text" style="margin-top:10px;">
+                    <a href="https://www.instagram.com/liminalsynths/" target="_blank" rel="noopener noreferrer" class="clickable" style="color:inherit; text-decoration:none;">@liminalsynths</a>
+                </div>
             </div>
         </div>
     </div>
 
     <div id="poster" class="page" style="background: white;">
-        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/返回鍵.svg" alt="back" class="back-icon"></div>
+        <div class="back-arrow clickable poster-diff" onclick="goTo('menu')"><img src="SVG/返回鍵.svg" alt="back" class="back-icon"></div>
 
         <!-- Desktop: collage -->
         <div class="poster-desktop">
@@ -572,6 +616,11 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
 
     <div id="detail" class="page">
         <div class="back-arrow clickable" onclick="goTo('poster')"><img src="SVG/返回鍵.svg" alt="back" class="back-icon"></div>
+        <div class="detail-mobile-info" id="detailMobileInfo">
+            <div class="small-title" id="detailTitleMobile">—</div>
+            <div class="meta-text" id="detailMetaMobile">—</div>
+            <div class="meta-text" id="detailDescMobile">—</div>
+        </div>
 
         <!-- 對齊檔案二：頁2（左側資訊＋右側大圖） -->
         <div class="w-full h-full relative">
@@ -591,6 +640,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
 
             <div class="absolute right-24 top-24 bottom-24 flex items-center justify-center detail-image-wrap" style="left: 360px;">
                 <img id="detailImage" src="" class="max-h-[78vh] detail-image" alt="detail image">
+                <div id="detailImageStack" class="detail-image-stack"></div>
             </div>
         </div>
     </div>
@@ -613,7 +663,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     <div id="project" class="page">
         <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/返回鍵.svg" alt="back" class="back-icon"></div>
         <div class="w-full h-full flex items-center justify-center">
-            <div class="meta-text" style="font-size:18px;">HJGJKJHKHKJHKHJ</div>
+            <div class="meta-text" style="font-size:18px;">motion (coming soon)</div>
         </div>
     </div>
 
@@ -687,6 +737,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     if (target) {
       target.classList.add('active');
       typePageText(target);
+      queuePosterBackBlendUpdate();
     }
 
     // Init per-page interactions (lazy)
@@ -830,12 +881,25 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     countEl.textContent = `${imageIndex + 1} / ${imageCount}`;
   }
 
+  function syncMobileDetailInfoOffset() {
+    const detailPage = document.getElementById('detail');
+    const infoBox = document.getElementById('detailMobileInfo');
+    if (!detailPage || !infoBox) return;
+    if (window.innerWidth >= 769) return;
+    const h = Math.ceil(infoBox.getBoundingClientRect().height);
+    detailPage.style.setProperty('--detail-mobile-info-h', `${h + 8}px`);
+  }
+
   function renderPosterDetail(key, requestedIndex = 0) {
     const work = POSTER_WORKS[key];
     const titleEl = document.getElementById('detailTitle');
     const metaEl = document.getElementById('detailMeta');
     const descEl = document.getElementById('detailDesc');
     const imgEl = document.getElementById('detailImage');
+    const titleMobileEl = document.getElementById('detailTitleMobile');
+    const metaMobileEl = document.getElementById('detailMetaMobile');
+    const descMobileEl = document.getElementById('detailDescMobile');
+    const stackEl = document.getElementById('detailImageStack');
 
     if (!titleEl || !metaEl || !descEl || !imgEl) return;
 
@@ -845,14 +909,22 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
       titleEl.textContent = '—';
       metaEl.innerHTML = '—';
       descEl.textContent = '';
+      if (titleMobileEl) titleMobileEl.textContent = '—';
+      if (metaMobileEl) metaMobileEl.innerHTML = '—';
+      if (descMobileEl) descMobileEl.textContent = '';
       imgEl.src = buildPlaceholderDataURI({ no: '--', title: 'not found' });
+      if (stackEl) stackEl.innerHTML = '';
       updateDetailGalleryControls(null, 0, 0);
+      window.requestAnimationFrame(syncMobileDetailInfoOffset);
       return;
     }
 
     titleEl.textContent = work.title;
     metaEl.innerHTML = `${work.year}<br>${work.type}`;
     descEl.textContent = work.desc;
+    if (titleMobileEl) titleMobileEl.textContent = work.title;
+    if (metaMobileEl) metaMobileEl.innerHTML = `${work.year}<br>${work.type}`;
+    if (descMobileEl) descMobileEl.textContent = work.desc;
 
     const images = getWorkImages(work);
     const maxIndex = Math.max(0, images.length - 1);
@@ -862,7 +934,21 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
 
     imgEl.src = images[safeIndex] || buildPlaceholderDataURI(work);
     imgEl.alt = work.title;
+
+    if (stackEl) {
+      stackEl.innerHTML = '';
+      const mobileImages = images.length ? images : [buildPlaceholderDataURI(work)];
+      mobileImages.forEach((src, idx) => {
+        const stackImg = document.createElement('img');
+        stackImg.src = src;
+        stackImg.alt = `${work.title} ${idx + 1}`;
+        stackEl.appendChild(stackImg);
+      });
+    }
+
     updateDetailGalleryControls(work, images.length, safeIndex);
+    window.requestAnimationFrame(syncMobileDetailInfoOffset);
+    window.setTimeout(syncMobileDetailInfoOffset, 120);
   }
 
   function prevDetailImage() {
@@ -899,17 +985,60 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     ensurePosterPlaceholders();
     renderPosterDetail(key);
     goTo('detail');
+    const detailPage = document.getElementById('detail');
+    if (detailPage) detailPage.scrollTop = 0;
     window.requestAnimationFrame(syncDetailImageFit);
+    window.requestAnimationFrame(syncMobileDetailInfoOffset);
     window.setTimeout(syncDetailImageFit, 80);
+    window.setTimeout(syncMobileDetailInfoOffset, 120);
   }
   window.openPoster = openPoster;
 
   window.addEventListener('resize', syncDetailImageFit);
+  window.addEventListener('resize', syncMobileDetailInfoOffset);
 
   const detailImageEl = document.getElementById('detailImage');
   if (detailImageEl) {
     detailImageEl.addEventListener('load', syncDetailImageFit);
   }
+
+  const posterBackIcon = document.getElementById('posterBackIcon');
+  const updatePosterBackIconBlend = () => {
+    if (!posterBackIcon) return;
+    const posterPage = document.getElementById('poster');
+    if (!posterPage || !posterPage.classList.contains('active')) {
+      posterBackIcon.classList.remove('poster-invert');
+      return;
+    }
+
+    const rect = posterBackIcon.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    const stack = document.elementsFromPoint(x, y);
+    const isOnPosterImage = stack.some((el) => {
+      if (!el || !(el instanceof Element)) return false;
+      if (el === posterBackIcon) return false;
+      if (el.id === 'customCursor') return false;
+      if (el.closest('.back-arrow')) return false;
+      return !!el.closest('#poster .floating-img, #poster .poster-card img');
+    });
+    posterBackIcon.classList.toggle('poster-invert', isOnPosterImage);
+  };
+
+  let posterBackBlendQueued = false;
+  function queuePosterBackBlendUpdate() {
+    if (posterBackBlendQueued) return;
+    posterBackBlendQueued = true;
+    window.requestAnimationFrame(() => {
+      posterBackBlendQueued = false;
+      updatePosterBackIconBlend();
+    });
+  }
+
+  document.addEventListener('mousemove', queuePosterBackBlendUpdate, { passive: true });
+  document.addEventListener('scroll', queuePosterBackBlendUpdate, { passive: true, capture: true });
+  window.addEventListener('resize', queuePosterBackBlendUpdate);
+  window.addEventListener('touchmove', queuePosterBackBlendUpdate, { passive: true });
 
   // -------- Menu hover swap (single SVG + hotspots) --------
   let menuInited = false;
@@ -919,7 +1048,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     const btns = document.querySelectorAll('.menu-hotspot');
     if (!menuSvg || !btns.length) return;
 
-    const originalSrc = menuSvg.getAttribute('src') || 'SVG/original.svg';
+    const originalSrc = menuSvg.getAttribute('src') || 'SVG/資產 17.svg';
 
     btns.forEach(btn => {
       const hoverSrc = btn.getAttribute('data-src');
