@@ -19,7 +19,7 @@
             background-color: white;
             overflow: hidden; /* 防止捲動，確保像簡報 */
         }
-        html, body { width: 100%; height: 100%; }
+        html, body { width: 100%; height: 100%; min-height: 100dvh; }
 
         /* Minimal utility classes (Tailwind-like) */
         .w-full{ width:100%; }
@@ -54,11 +54,11 @@
 body, .page, .clickable, button, a, img { cursor: none; }
 .page {
             display: none;
+            position: fixed;
+            inset: 0;
             width: 100vw;
             height: 100vh;
-            position: absolute;
-            top: 0;
-            left: 0;
+            height: 100dvh;
         }
 
         .active {
@@ -80,7 +80,7 @@ body, .page, .clickable, button, a, img { cursor: none; }
 
         .landing-logo{ width: min(720px, 80vw); height: auto; display:block; }
 
-        .landing-stage{ position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+        .landing-stage{ position:relative; width:100%; height:100%; min-height:100dvh; display:flex; align-items:center; justify-content:center; overflow:hidden; }
         .landing-bg{ position:absolute; inset:0; width:100%; height:100%; z-index:0; }
         .landing-bg-white{ background:#fff; }
         .landing-flash{
@@ -128,7 +128,13 @@ body, .page, .clickable, button, a, img { cursor: none; }
         .menu-link + .menu-link{ margin-top: -18px; }
 
         .back-arrow { position: absolute; top: 44px; right: 44px; z-index: 100; }
-        .back-icon{ width: 30px; height: 30px; display:block; }
+        .back-icon{
+            width: 30px;
+            height: 30px;
+            display:block;
+            mix-blend-mode: difference;
+            filter: brightness(0) invert(1);
+        }
         .menu-back-icon{ width: 90px; height: 90px; }
 
         /* 檔案二的陰影字（頁3/頁6） */
@@ -159,7 +165,7 @@ body, .page, .clickable, button, a, img { cursor: none; }
             overflow: visible;
         }
     
-        .center-screen{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+        .center-screen{ width:100%; height:100%; min-height:100dvh; display:flex; align-items:center; justify-content:center; }
         .menu-swap{ position:relative; width:min(720px, 92vw); }
         .menu-swap img{ width:100%; height:auto; display:block; user-select:none; -webkit-user-drag:none; }
         .menu-hotspots{
@@ -211,7 +217,11 @@ body, .page, .clickable, button, a, img { cursor: none; }
   transform: translate(-100px, -100px);
   user-select: none;
   -webkit-user-drag: none;
-  mix-blend-mode: difference; /* white cursor becomes black on white, negative on color */
+  mix-blend-mode: normal;
+  filter: none;
+}
+#customCursor.invert{
+  mix-blend-mode: difference;
   filter: brightness(0) invert(1);
 }
 #customCursor.down{
@@ -961,11 +971,19 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   };
 
   let lastX = -100, lastY = -100;
+  const CURSOR_INVERT_TARGETS = '.floating-img, #detailImage, .poster-card img';
+  const updateCursorInvertState = (x, y) => {
+    if (!cursor) return;
+    const el = document.elementFromPoint(x, y);
+    const shouldInvert = !!(el && el.closest && el.closest(CURSOR_INVERT_TARGETS));
+    cursor.classList.toggle('invert', shouldInvert);
+  };
   if (cursor) {
     document.addEventListener('mousemove', (e) => {
       lastX = e.clientX;
       lastY = e.clientY;
       placeCursor(lastX, lastY, cursor.classList.contains('down') ? 0.88 : 1);
+      updateCursorInvertState(lastX, lastY);
     });
 
     document.addEventListener('mousedown', () => {
