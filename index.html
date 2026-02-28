@@ -149,7 +149,15 @@ body, .page, .clickable, button, a, img { cursor: none; }
 
         /* 更像檔案二：大量留白、文字不要太粗 */
         .meta-text { font-size: 12px; line-height: 1.35; color: #111; }
-        .small-title { font-size: 22px; font-weight: 600; }
+        .small-title {
+            font-size: 22px;
+            font-weight: 600;
+            display: inline-block;
+            line-height: 1.15;
+            padding-top: 0.08em; /* prevent top glyph clipping on this font */
+            padding-bottom: 0.03em;
+            overflow: visible;
+        }
     
         .center-screen{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
         .menu-swap{ position:relative; width:min(720px, 92vw); }
@@ -170,6 +178,27 @@ body, .page, .clickable, button, a, img { cursor: none; }
         }
         /* Ensure no drop shadow on detail images */
         .detail-image{ box-shadow:none !important; filter:none !important; }
+        .detail-gallery-nav{
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-top: 10px;
+        }
+        .detail-gallery-btn{
+          border: 1px solid #111;
+          background: transparent;
+          color: #111;
+          font-family: 'NeueMetanaNext', sans-serif;
+          font-size: 12px;
+          line-height: 1;
+          padding: 4px 8px;
+          cursor: none;
+        }
+        .detail-gallery-count{
+          font-size: 11px;
+          line-height: 1;
+          color: #111;
+        }
 
 
         /* Custom cursor: SVG mouse */
@@ -182,6 +211,8 @@ body, .page, .clickable, button, a, img { cursor: none; }
   transform: translate(-100px, -100px);
   user-select: none;
   -webkit-user-drag: none;
+  mix-blend-mode: difference; /* white cursor becomes black on white, negative on color */
+  filter: brightness(0) invert(1);
 }
 #customCursor.down{
   transform: translate(-100px, -100px) scale(0.88);
@@ -204,11 +235,17 @@ html.is-touch img {
 }
 
 html.is-touch #customCursor{ display:none !important; }
+html.is-touch .detail-gallery-btn{ cursor: pointer; }
 
 @media (max-width: 768px){
+  :root{
+    --mobile-back-top: max(28px, calc(env(safe-area-inset-top) + 10px));
+    --mobile-back-right: 18px;
+    --mobile-back-size: 24px;
+  }
   /* allow the UI to breathe on mobile without touching desktop */
-  .back-arrow{ top: 18px; right: 18px; }
-  .back-icon{ width: 26px; height: 26px; }
+  .back-arrow{ top: var(--mobile-back-top); right: var(--mobile-back-right); }
+  .back-icon{ width: var(--mobile-back-size); height: var(--mobile-back-size); }
   .menu-back-icon{ width: 78px; height: 78px; }
 
   /* Menu scaling (keeps the same design, just fits screen) */
@@ -219,39 +256,52 @@ html.is-touch #customCursor{ display:none !important; }
   #about .about-box{ width: min(520px, 88vw) !important; padding: 22px !important; font-size: 16px !important; }
 
   /* Detail layout: stack and fit */
-  #detail .small-title{ font-size: 18px; }
+  #detail .small-title{
+    font-size: 18px;
+    line-height: 1.18;
+    padding-top: 0.08em;
+  }
   #detail .meta-text{ font-size: 12px; }
 
   /* Mobile poster: vertical card feed */
   #poster{
     overflow-x: hidden;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow-y: hidden;
   }
   #poster .back-arrow{
     position: fixed;
-    top: max(18px, env(safe-area-inset-top));
-    right: 18px;
+    top: var(--mobile-back-top);
+    right: var(--mobile-back-right);
     z-index: 140;
   }
   #poster .poster-desktop{ display: none; }
   #poster .poster-mobile{
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0;
     padding: 0;
+    width: 100vw;
+    height: 100vh;
     box-sizing: border-box;
   }
+  #poster .poster-col{
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
   #poster .poster-card{
-    width: 100vw;
+    width: 100%;
     border: 0;
     background: #fff;
     margin: 0;
     box-sizing: border-box;
+    line-height: 0;
   }
   #poster .poster-card img{
     display: block;
-    width: 100vw;
+    width: 100%;
     height: auto;
   }
 
@@ -286,7 +336,7 @@ html.is-touch #customCursor{ display:none !important; }
   }
   #detail .detail-title-wrap{
     order: 1;
-    padding: max(18px, env(safe-area-inset-top)) 14px 0;
+    padding: var(--mobile-back-top) 14px 0;
     box-sizing: border-box;
   }
   #detail .detail-meta-wrap{
@@ -334,7 +384,9 @@ html.is-touch #customCursor{ display:none !important; }
   /* Restore previous desktop type scale distribution for work info */
   #detail .small-title{
     font-size: 33px;
-    line-height: 1.08;
+    line-height: 1.14;
+    padding-top: 0.08em;
+    padding-bottom: 0.04em;
   }
   #detail #detailMeta{
     font-size: 18px;
@@ -369,6 +421,7 @@ html.is-touch #customCursor{ display:none !important; }
     right: auto !important;
     bottom: auto !important;
     max-width: min(26vw, 380px);
+    overflow: visible;
   }
   #detail .detail-meta-wrap{
     left: clamp(56px, 6vw, 110px) !important;
@@ -470,38 +523,42 @@ html.is-touch #customCursor{ display:none !important; }
 
         <!-- Desktop: collage -->
         <div class="poster-desktop">
-            <img src="image/2.png" class="floating-img w-56" style="top:8%; left:8%;"  onclick="openPoster('mutant')"   alt="mutant">
-            <img src="image/3.jpg" class="floating-img w-56" style="top:22%; left:16%;" onclick="openPoster('melite')"   alt="melite">
-            <img src="image/4.png" class="floating-img w-44" style="top:12%; left:34%;" onclick="openPoster('pearl')"   data-placeholder="pearl"   alt="pearl">
-            <img src="image/5.jpg" class="floating-img w-44" style="top:26%; left:38%;" onclick="openPoster('passion')" data-placeholder="passion" alt="passion">
-            <img src="image/6.png" class="floating-img w-60" style="top:8%; left:50%;"  onclick="openPoster('meteorite')" alt="meteorite">
+            <img src="image/works/mutant/cover.png" class="floating-img w-56" style="top:8%; left:8%;"  onclick="openPoster('mutant')"   alt="mutant">
+            <img src="image/works/melite/cover.jpg" class="floating-img w-56" style="top:22%; left:16%;" onclick="openPoster('melite')"   alt="melite">
+            <img src="image/works/pearl/cover.png" class="floating-img w-44" style="top:12%; left:34%;" onclick="openPoster('pearl')"   data-placeholder="pearl"   alt="pearl">
+            <img src="image/works/passion/cover.jpg" class="floating-img w-44" style="top:26%; left:38%;" onclick="openPoster('passion')" data-placeholder="passion" alt="passion">
+            <img src="image/works/meteorite/cover.png" class="floating-img w-60" style="top:8%; left:50%;"  onclick="openPoster('meteorite')" alt="meteorite">
 
-            <img src="image/7.jpg" class="floating-img w-72" style="top:14%; left:64%;" onclick="openPoster('multiboost')" alt="multiboost">
-            <img src="image/8.jpg" class="floating-img w-56" style="top:30%; left:74%;" onclick="openPoster('iridescent')" alt="iridescent">
-            <img src="image/9.jpg" class="floating-img w-64" style="top:46%; left:78%;" onclick="openPoster('born_this_way')" alt="born this way">
+            <img src="image/works/multiboost/cover.jpg" class="floating-img w-72" style="top:14%; left:64%;" onclick="openPoster('multiboost')" alt="multiboost">
+            <img src="image/works/iridescent/cover.jpg" class="floating-img w-56" style="top:30%; left:74%;" onclick="openPoster('iridescent')" alt="iridescent">
+            <img src="image/works/born-this-way/cover.jpg" class="floating-img w-64" style="top:46%; left:78%;" onclick="openPoster('born_this_way')" alt="born this way">
 
-            <img src="image/10.jpg" class="floating-img w-64" style="bottom:18%; left:56%;" onclick="openPoster('strike')" alt="strike">
-            <img src="image/11.jpg" class="floating-img w-56" style="bottom:14%; left:36%;" onclick="openPoster('mirror')" alt="mirror">
-            <img src="image/12.jpg" class="floating-img w-60" style="bottom:10%; left:18%;" onclick="openPoster('foray')" alt="foray">
-            <img src="image/13.png" class="floating-img w-44" style="bottom:30%; left:12%;" onclick="openPoster('the_crown')" data-placeholder="the_crown" alt="the crown">
-            <img src="image/14.jpg" class="floating-img w-56" style="bottom:30%; left:70%;" onclick="openPoster('yungboi_harris')" alt="yungboi harris">
+            <img src="image/works/strike/cover.jpg" class="floating-img w-64" style="bottom:18%; left:56%;" onclick="openPoster('strike')" alt="strike">
+            <img src="image/works/mirror/cover.jpg" class="floating-img w-56" style="bottom:14%; left:36%;" onclick="openPoster('mirror')" alt="mirror">
+            <img src="image/works/foray/cover.jpg" class="floating-img w-60" style="bottom:10%; left:18%;" onclick="openPoster('foray')" alt="foray">
+            <img src="image/works/the-crown/cover.png" class="floating-img w-44" style="bottom:30%; left:12%;" onclick="openPoster('the_crown')" data-placeholder="the_crown" alt="the crown">
+            <img src="image/works/yungboi-harris/cover.jpg" class="floating-img w-56" style="bottom:30%; left:70%;" onclick="openPoster('yungboi_harris')" alt="yungboi harris">
         </div>
 
         <!-- Mobile: vertical card feed -->
         <div class="poster-mobile">
-            <div class="poster-card clickable" onclick="openPoster('mutant')"><img src="image/2.png" alt="mutant"></div>
-            <div class="poster-card clickable" onclick="openPoster('melite')"><img src="image/3.jpg" alt="melite"></div>
-            <div class="poster-card clickable" onclick="openPoster('pearl')"><img src="image/4.png" alt="pearl"></div>
-            <div class="poster-card clickable" onclick="openPoster('passion')"><img src="image/5.jpg" alt="passion"></div>
-            <div class="poster-card clickable" onclick="openPoster('meteorite')"><img src="image/6.png" alt="meteorite"></div>
-            <div class="poster-card clickable" onclick="openPoster('multiboost')"><img src="image/7.jpg" alt="multiboost"></div>
-            <div class="poster-card clickable" onclick="openPoster('iridescent')"><img src="image/8.jpg" alt="iridescent"></div>
-            <div class="poster-card clickable" onclick="openPoster('born_this_way')"><img src="image/9.jpg" alt="born this way"></div>
-            <div class="poster-card clickable" onclick="openPoster('strike')"><img src="image/10.jpg" alt="strike"></div>
-            <div class="poster-card clickable" onclick="openPoster('mirror')"><img src="image/11.jpg" alt="mirror"></div>
-            <div class="poster-card clickable" onclick="openPoster('foray')"><img src="image/12.jpg" alt="foray"></div>
-            <div class="poster-card clickable" onclick="openPoster('the_crown')"><img src="image/13.png" alt="the crown"></div>
-            <div class="poster-card clickable" onclick="openPoster('yungboi_harris')"><img src="image/14.jpg" alt="yungboi harris"></div>
+            <div class="poster-col">
+                <div class="poster-card clickable" onclick="openPoster('mutant')"><img src="image/works/mutant/cover.png" alt="mutant"></div>
+                <div class="poster-card clickable" onclick="openPoster('pearl')"><img src="image/works/pearl/cover.png" alt="pearl"></div>
+                <div class="poster-card clickable" onclick="openPoster('meteorite')"><img src="image/works/meteorite/cover.png" alt="meteorite"></div>
+                <div class="poster-card clickable" onclick="openPoster('iridescent')"><img src="image/works/iridescent/cover.jpg" alt="iridescent"></div>
+                <div class="poster-card clickable" onclick="openPoster('strike')"><img src="image/works/strike/cover.jpg" alt="strike"></div>
+                <div class="poster-card clickable" onclick="openPoster('foray')"><img src="image/works/foray/cover.jpg" alt="foray"></div>
+                <div class="poster-card clickable" onclick="openPoster('yungboi_harris')"><img src="image/works/yungboi-harris/cover.jpg" alt="yungboi harris"></div>
+            </div>
+            <div class="poster-col">
+                <div class="poster-card clickable" onclick="openPoster('melite')"><img src="image/works/melite/cover.jpg" alt="melite"></div>
+                <div class="poster-card clickable" onclick="openPoster('passion')"><img src="image/works/passion/cover.jpg" alt="passion"></div>
+                <div class="poster-card clickable" onclick="openPoster('multiboost')"><img src="image/works/multiboost/cover.jpg" alt="multiboost"></div>
+                <div class="poster-card clickable" onclick="openPoster('born_this_way')"><img src="image/works/born-this-way/cover.jpg" alt="born this way"></div>
+                <div class="poster-card clickable" onclick="openPoster('mirror')"><img src="image/works/mirror/cover.jpg" alt="mirror"></div>
+                <div class="poster-card clickable" onclick="openPoster('the_crown')"><img src="image/works/the-crown/cover.png" alt="the crown"></div>
+            </div>
         </div>
     </div>
 
@@ -517,6 +574,11 @@ html.is-touch #customCursor{ display:none !important; }
             <div class="absolute left-24 bottom-24 w-72 space-y-3 detail-meta-wrap detail-copy-group">
                 <div class="meta-text" id="detailMeta">—</div>
                 <div class="meta-text" id="detailDesc">—</div>
+                <div class="detail-gallery-nav" id="detailGalleryNav" style="display:none;">
+                    <button type="button" class="detail-gallery-btn clickable" onclick="prevDetailImage()">prev</button>
+                    <span class="detail-gallery-count" id="detailGalleryCount">1 / 1</span>
+                    <button type="button" class="detail-gallery-btn clickable" onclick="nextDetailImage()">next</button>
+                </div>
             </div>
 
             <div class="absolute right-24 top-24 bottom-24 flex items-center justify-center detail-image-wrap" style="left: 360px;">
@@ -548,6 +610,7 @@ html.is-touch #customCursor{ display:none !important; }
     </div>
 
     
+<script src="data/works.js"></script>
 <script>
 (() => {
   const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
@@ -703,116 +766,12 @@ html.is-touch #customCursor{ display:none !important; }
   initLandingFlash();
 
   // ---------------------------
-  // Poster metadata (from your PDF sheet: 2~14)
-  // Each work opens the shared #detail page.
-  // If an image is missing in /image, we render a minimal placeholder.
+  // Poster metadata source:
+  // data/works.js -> window.WORKS_DATA
   // ---------------------------
-  const POSTER_WORKS = {
-    mutant: {
-      no: 2,
-      title: 'mutant',
-      year: '2023',
-      type: 'digital visual art',
-      desc: 'an abstract beast modeled to symbolize mutation.',
-      image: 'image/2.png'
-    },
-    melite: {
-      no: 3,
-      title: 'melite',
-      year: '2023',
-      type: 'digital visual art',
-      desc: 'a digitally modeled expression of joy and diversity.',
-      image: 'image/3.jpg'
-    },
-    pearl: {
-      no: 4,
-      title: 'pearl',
-      year: '2023',
-      type: 'digital visual art',
-      desc: 'an experimental take on the proverb "untainted by the mud," created with digital modeling and post-production.',
-      image: 'image/4.png'
-    },
-    passion: {
-      no: 5,
-      title: 'passion',
-      year: '2022',
-      type: 'digital wallpaper',
-      desc: 'a minimalist, modern desktop wallpaper created through digital modeling.',
-      image: 'image/5.jpg'
-    },
-    meteorite: {
-      no: 6,
-      title: 'Meteorite',
-      year: '2020',
-      type: 'digital wallpaper',
-      desc: 'a minimalist, modern desktop wallpaper created through digital modeling.',
-      image: 'image/6.png'
-    },
-    multiboost: {
-      no: 7,
-      title: 'multiboost',
-      year: '2019',
-      type: 'visual poster',
-      desc: 'a visualization of vibrant color impact and pulsing rhythm, created through digital modeling and post-production.',
-      image: 'image/7.jpg'
-    },
-    iridescent: {
-      no: 8,
-      title: 'iridescent',
-      year: '2017',
-      type: 'visual poster',
-      desc: 'a luminous, iridescent form rendered through digital modeling and post-production.',
-      image: 'image/8.jpg'
-    },
-    born_this_way: {
-      no: 9,
-      title: 'born this way',
-      year: '2017',
-      type: 'digital visual art',
-      desc: '“after cosmic collision comes life” — a structural burst of color created through digital modeling and post-production.',
-      image: 'image/9.jpg'
-    },
-    strike: {
-      no: 10,
-      title: 'strike',
-      year: '2021',
-      type: 'visual poster',
-      desc: 'playful, colorful discs collide in a digital space, presented through modeling and post-production.',
-      image: 'image/10.jpg'
-    },
-    mirror: {
-      no: 11,
-      title: 'mirror',
-      year: '2021',
-      type: 'visual poster',
-      desc: 'a surreal mirror opens a portal in a gradient world, created through digital modeling and post-production.',
-      image: 'image/11.jpg'
-    },
-    foray: {
-      no: 12,
-      title: 'foray',
-      year: '2021',
-      type: 'visual poster',
-      desc: 'a massive celestial body lands on barren ground. its origin and purpose unknown. created with illustration and post-production tools.',
-      image: 'image/12.jpg'
-    },
-    the_crown: {
-      no: 13,
-      title: 'the crown',
-      year: '2021',
-      type: 'visual poster',
-      desc: 'a crown of dominance above alien colonies, created through illustration, modeling, and post-production.',
-      image: 'image/13.png'
-    },
-    yungboi_harris: {
-      no: 14,
-      title: 'yungboi harris',
-      year: '2018',
-      type: 'album cover',
-      desc: 'an album cover designed for rapper t.i.g.’s release “yungboi harris.”',
-      image: 'image/14.jpg'
-    }
-  };
+  const POSTER_WORKS = window.WORKS_DATA || {};
+  let currentWorkKey = null;
+  let currentImageIndex = 0;
 
   function buildPlaceholderDataURI(work) {
     const no = String(work.no || '').padStart(2, '0');
@@ -840,7 +799,30 @@ html.is-touch #customCursor{ display:none !important; }
     });
   }
 
-  function renderPosterDetail(key) {
+  function getWorkImages(work) {
+    if (!work) return [];
+    if (Array.isArray(work.images) && work.images.length) return work.images;
+    if (work.image) return [work.image];
+    if (work.cover) return [work.cover];
+    return [];
+  }
+
+  function updateDetailGalleryControls(work, imageCount, imageIndex) {
+    const navEl = document.getElementById('detailGalleryNav');
+    const countEl = document.getElementById('detailGalleryCount');
+    if (!navEl || !countEl) return;
+
+    if (!work || imageCount <= 1) {
+      navEl.style.display = 'none';
+      countEl.textContent = '1 / 1';
+      return;
+    }
+
+    navEl.style.display = 'flex';
+    countEl.textContent = `${imageIndex + 1} / ${imageCount}`;
+  }
+
+  function renderPosterDetail(key, requestedIndex = 0) {
     const work = POSTER_WORKS[key];
     const titleEl = document.getElementById('detailTitle');
     const metaEl = document.getElementById('detailMeta');
@@ -850,10 +832,13 @@ html.is-touch #customCursor{ display:none !important; }
     if (!titleEl || !metaEl || !descEl || !imgEl) return;
 
     if (!work) {
+      currentWorkKey = null;
+      currentImageIndex = 0;
       titleEl.textContent = '—';
       metaEl.innerHTML = '—';
       descEl.textContent = '';
       imgEl.src = buildPlaceholderDataURI({ no: '--', title: 'not found' });
+      updateDetailGalleryControls(null, 0, 0);
       return;
     }
 
@@ -861,9 +846,36 @@ html.is-touch #customCursor{ display:none !important; }
     metaEl.innerHTML = `${work.year}<br>${work.type}`;
     descEl.textContent = work.desc;
 
-    imgEl.src = work.image ? work.image : buildPlaceholderDataURI(work);
+    const images = getWorkImages(work);
+    const maxIndex = Math.max(0, images.length - 1);
+    const safeIndex = Math.min(Math.max(0, requestedIndex), maxIndex);
+    currentWorkKey = key;
+    currentImageIndex = safeIndex;
+
+    imgEl.src = images[safeIndex] || buildPlaceholderDataURI(work);
     imgEl.alt = work.title;
+    updateDetailGalleryControls(work, images.length, safeIndex);
   }
+
+  function prevDetailImage() {
+    const work = POSTER_WORKS[currentWorkKey];
+    const images = getWorkImages(work);
+    if (!work || images.length <= 1) return;
+    const nextIndex = (currentImageIndex - 1 + images.length) % images.length;
+    renderPosterDetail(currentWorkKey, nextIndex);
+    window.requestAnimationFrame(syncDetailImageFit);
+  }
+
+  function nextDetailImage() {
+    const work = POSTER_WORKS[currentWorkKey];
+    const images = getWorkImages(work);
+    if (!work || images.length <= 1) return;
+    const nextIndex = (currentImageIndex + 1) % images.length;
+    renderPosterDetail(currentWorkKey, nextIndex);
+    window.requestAnimationFrame(syncDetailImageFit);
+  }
+  window.prevDetailImage = prevDetailImage;
+  window.nextDetailImage = nextDetailImage;
 
   function syncDetailImageFit() {
     const wrap = document.querySelector('#detail .detail-image-wrap');
