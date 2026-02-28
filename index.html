@@ -174,6 +174,44 @@ body, .page, .clickable, button, a, img { cursor: none; }
             padding-bottom: 0.03em;
             overflow: visible;
         }
+        /* Work detail title style: white text with dark + light outline, tighter tracking */
+        #detail .work-title{
+            --title-stroke-dark: 12px;
+            --title-stroke-light: 18px;
+            position: relative;
+            z-index: 0;
+            display: inline-block;
+            color: #ffffff;
+            letter-spacing: -0.07em;
+            line-height: 0.96;
+            white-space: pre-wrap;
+            font-kerning: none;
+            text-rendering: geometricPrecision;
+        }
+        #detail .work-title::before,
+        #detail .work-title::after{
+            content: attr(data-title);
+            position: absolute;
+            inset: 0;
+            font: inherit;
+            letter-spacing: inherit;
+            line-height: inherit;
+            white-space: inherit;
+            font-kerning: inherit;
+            text-rendering: inherit;
+            pointer-events: none;
+            transform: translateZ(0);
+        }
+        #detail .work-title::before{
+            color: transparent;
+            -webkit-text-stroke: var(--title-stroke-dark) #140305;
+            z-index: -1;
+        }
+        #detail .work-title::after{
+            color: transparent;
+            -webkit-text-stroke: var(--title-stroke-light) #dbdcdc;
+            z-index: -2;
+        }
     
         .center-screen{ width:100%; height:100%; min-height:100dvh; display:flex; align-items:center; justify-content:center; }
         .menu-swap{ position:relative; width:min(400px, 52vw); }
@@ -303,6 +341,12 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     font-size: 18px;
     line-height: 1.18;
     padding-top: 0.08em;
+  }
+  #detail .work-title{
+    --title-stroke-dark: 7px;
+    --title-stroke-light: 11px;
+    letter-spacing: -0.06em;
+    line-height: 0.98;
   }
   #detail .meta-text{ font-size: 12px; }
 
@@ -640,8 +684,8 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
 
     <div id="detail" class="page">
         <div class="back-arrow clickable" onclick="goTo('poster')"><img src="SVG/資產 18.svg" alt="back" class="back-icon"></div>
-        <div class="detail-mobile-info" id="detailMobileInfo">
-            <div class="small-title" id="detailTitleMobile">—</div>
+            <div class="detail-mobile-info" id="detailMobileInfo">
+            <div class="small-title work-title" id="detailTitleMobile" data-title="—">—</div>
             <div class="meta-text" id="detailMetaMobile">—</div>
             <div class="meta-text" id="detailDescMobile">—</div>
         </div>
@@ -649,7 +693,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
         <!-- 對齊檔案二：頁2（左側資訊＋右側大圖） -->
         <div class="w-full h-full relative">
             <div class="absolute left-24 top-24 detail-title-wrap detail-copy-group">
-                <div class="small-title" id="detailTitle">—</div>
+                <div class="small-title work-title" id="detailTitle" data-title="—">—</div>
             </div>
 
             <div class="absolute left-24 bottom-24 w-72 space-y-3 detail-meta-wrap detail-copy-group">
@@ -745,7 +789,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     let node = walker.nextNode();
     while (node) {
       const parent = node.parentElement;
-      if (parent && !parent.closest('.back-arrow')) {
+      if (parent && !parent.closest('.back-arrow') && !parent.closest('.work-title')) {
         const tag = parent.tagName;
         if (tag !== 'SCRIPT' && tag !== 'STYLE') targets.push(node);
       }
@@ -931,9 +975,13 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
       currentWorkKey = null;
       currentImageIndex = 0;
       titleEl.textContent = '—';
+      titleEl.setAttribute('data-title', '—');
       metaEl.innerHTML = '—';
       descEl.textContent = '';
-      if (titleMobileEl) titleMobileEl.textContent = '—';
+      if (titleMobileEl) {
+        titleMobileEl.textContent = '—';
+        titleMobileEl.setAttribute('data-title', '—');
+      }
       if (metaMobileEl) metaMobileEl.innerHTML = '—';
       if (descMobileEl) descMobileEl.textContent = '';
       imgEl.src = buildPlaceholderDataURI({ no: '--', title: 'not found' });
@@ -944,9 +992,13 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     }
 
     titleEl.textContent = work.title;
+    titleEl.setAttribute('data-title', work.title);
     metaEl.innerHTML = `${work.year}<br>${work.type}`;
     descEl.textContent = work.desc;
-    if (titleMobileEl) titleMobileEl.textContent = work.title;
+    if (titleMobileEl) {
+      titleMobileEl.textContent = work.title;
+      titleMobileEl.setAttribute('data-title', work.title);
+    }
     if (metaMobileEl) metaMobileEl.innerHTML = `${work.year}<br>${work.type}`;
     if (descMobileEl) descMobileEl.textContent = work.desc;
 
