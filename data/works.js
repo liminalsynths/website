@@ -171,7 +171,10 @@ window.WORKS_DATA = {
     type: "illustration",
     desc: "\"super power 100\" is a drawing project that visualizes 100 unique powers possessed by a boy named john.",
     cover: "image/works/super power 100 inside.png",
-    images: ["image/works/super power 100 inside.png"]
+    images: [
+      "image/works/super power 100 inside.png",
+      "image/works/資產 818@2x.png"
+    ]
   },
   wonderland: {
     no: 19,
