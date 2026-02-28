@@ -132,5 +132,55 @@ window.WORKS_DATA = {
     desc: "an album cover designed for rapper t.i.g.’s release “yungboi harris.”",
     cover: "image/works/yungboi-harris/cover.jpg",
     images: ["image/works/yungboi-harris/cover.jpg"]
+  },
+  parallel_paradise: {
+    no: 15,
+    slug: "parallel-paradise",
+    title: "parallel paradise",
+    year: "2022",
+    type: "typographic",
+    desc: "a custom typeface designed for the solo exhibition \"parallel paradise,\" created through illustration and modeling.",
+    cover: "image/works/parallel paradise.png",
+    images: ["image/works/parallel paradise.png"]
+  },
+  fallen_angel: {
+    no: 16,
+    slug: "fallen-angel",
+    title: "fallen angel",
+    year: "2022",
+    type: "typographic",
+    desc: "a typeface inspired by the painting \"fallen angel,\" created using illustration and modeling.",
+    cover: "image/works/fallen angel.png",
+    images: ["image/works/fallen angel.png"]
+  },
+  stupid: {
+    no: 17,
+    slug: "stupid",
+    title: "stupid",
+    year: "2022",
+    type: "typographic",
+    desc: "a typeface inspired by lady gaga's song \"stupid love,\" created through illustration and modeling.",
+    cover: "image/works/stupid.png",
+    images: ["image/works/stupid.png"]
+  },
+  super_power_100: {
+    no: 18,
+    slug: "super-power-100",
+    title: "super power 100",
+    year: "2022",
+    type: "illustration",
+    desc: "\"super power 100\" is a drawing project that visualizes 100 unique powers possessed by a boy named john.",
+    cover: "image/works/super power 100 inside.png",
+    images: ["image/works/super power 100 inside.png"]
+  },
+  wonderland: {
+    no: 19,
+    slug: "wonderland",
+    title: "wonderland",
+    year: "2017",
+    type: "illustration",
+    desc: "a teal penguin wandering through a world where cuteness meets the uncanny.",
+    cover: "image/works/wonderland.png",
+    images: ["image/works/wonderland.png"]
   }
 };
