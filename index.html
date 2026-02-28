@@ -19,6 +19,9 @@
             background-color: white;
             overflow: hidden; /* 防止捲動，確保像簡報 */
         }
+        :root{
+            --back-arrow-y-mobile: 73dvh;
+        }
         html, body { width: 100%; height: 100%; min-height: 100dvh; }
 
         /* Minimal utility classes (Tailwind-like) */
@@ -129,16 +132,9 @@ body, .page, .clickable, button, a, img { cursor: none; }
 
         .back-arrow { position: absolute; top: 44px; right: 44px; z-index: 100; }
         .back-icon{
-            width: 30px;
-            height: 30px;
+            width: 51px;
+            height: 51px;
             display:block;
-        }
-        #poster .back-arrow.poster-diff{
-            mix-blend-mode: difference !important;
-        }
-        #poster .back-arrow.poster-diff .back-icon{
-            mix-blend-mode: normal !important;
-            filter: brightness(0) invert(1) !important;
         }
         .menu-back-icon{ width: 90px; height: 90px; }
 
@@ -267,16 +263,40 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   :root{
     --mobile-back-top: max(28px, calc(env(safe-area-inset-top) + 10px));
     --mobile-back-right: 18px;
-    --mobile-back-size: 24px;
+    --mobile-back-size: 41px;
   }
   /* allow the UI to breathe on mobile without touching desktop */
-  .back-arrow{ top: var(--mobile-back-top); right: var(--mobile-back-right); }
+  .back-arrow{
+    top: var(--back-arrow-y-mobile);
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
   .back-icon{ width: var(--mobile-back-size); height: var(--mobile-back-size); }
   .menu-back-icon{ width: 78px; height: 78px; }
 
   /* Menu scaling (keeps the same design, just fits screen) */
   .menu-swap{ width: min(310px, 52vw); }
   .menu-link + .menu-link{ margin-top: -12px; }
+
+  /* Identity: left-aligned text, horizontally centered block, smaller unified type */
+  #identity .w-full.h-full.flex.items-center.justify-center{
+    justify-content: center;
+    padding-left: 18px;
+    padding-right: 18px;
+    box-sizing: border-box;
+  }
+  #identity .about-box{
+    width: min(420px, 86vw) !important;
+    padding: 0 !important;
+    transform: none !important;
+    font-size: 13px !important;
+    line-height: 1.35 !important;
+  }
+  #identity .meta-text{
+    font-size: 13px !important;
+    line-height: 1.35 !important;
+  }
 
   /* Detail layout: stack and fit */
   #detail .small-title{
@@ -293,8 +313,10 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   }
   #poster .back-arrow{
     position: fixed;
-    top: var(--mobile-back-top);
-    right: var(--mobile-back-right);
+    top: var(--back-arrow-y-mobile);
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
     z-index: 140;
   }
   #poster .poster-desktop{ display: none; }
@@ -336,8 +358,10 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   }
   #detail .back-arrow{
     position: fixed;
-    top: var(--mobile-back-top);
-    right: var(--mobile-back-right);
+    top: var(--back-arrow-y-mobile);
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
     z-index: 140;
   }
   #detail .w-full.h-full.relative{
@@ -537,7 +561,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     
 <div id="menu" class="page">
     <div class="back-arrow clickable" onclick="goTo('landing')">
-         <img src="SVG/返回鍵.svg" alt="back" class="back-icon">
+         <img src="SVG/資產 18.svg" alt="back" class="back-icon">
     </div>
 
     <div class="center-screen">
@@ -553,13 +577,13 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
 </div>
 
     <div id="identity" class="page">
-        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/返回鍵.svg" alt="back" class="back-icon"></div>
+        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/資產 18.svg" alt="back" class="back-icon"></div>
         <div class="w-full h-full flex items-center justify-center">
             <div class="about-box p-10 text-left text-2xl" style="width: min(680px, 84vw); line-height:1.45; background:transparent;">
                 In the liminal state between<br>
                 medium and concept, synths emerge.<br><br>
                 features visual creations<br>
-                in various forms.<br><br><br>
+                in various forms.<br><br><br><br><br>
                 <div class="meta-text">
                     <a href="mailto:liminalsynths@gmail.com" class="clickable" style="color:inherit; text-decoration:none;">liminalsynths@gmail.com</a>
                 </div>
@@ -571,7 +595,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     </div>
 
     <div id="poster" class="page" style="background: white;">
-        <div class="back-arrow clickable poster-diff" onclick="goTo('menu')"><img src="SVG/返回鍵.svg" alt="back" class="back-icon"></div>
+        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/資產 18.svg" alt="back" class="back-icon"></div>
 
         <!-- Desktop: collage -->
         <div class="poster-desktop">
@@ -615,7 +639,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     </div>
 
     <div id="detail" class="page">
-        <div class="back-arrow clickable" onclick="goTo('poster')"><img src="SVG/返回鍵.svg" alt="back" class="back-icon"></div>
+        <div class="back-arrow clickable" onclick="goTo('poster')"><img src="SVG/資產 18.svg" alt="back" class="back-icon"></div>
         <div class="detail-mobile-info" id="detailMobileInfo">
             <div class="small-title" id="detailTitleMobile">—</div>
             <div class="meta-text" id="detailMetaMobile">—</div>
@@ -646,7 +670,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     </div>
     <!-- typographic -->
     <div id="typographic" class="page">
-        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/返回鍵.svg" alt="back" class="back-icon"></div>
+        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/資產 18.svg" alt="back" class="back-icon"></div>
         <div class="w-full h-full flex items-center justify-center">
             <div class="meta-text" style="font-size:18px;">typographic (coming soon)</div>
         </div>
@@ -654,14 +678,14 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
 
     <!-- illustration / project：先放同版式 placeholder，之後換你的內容 -->
     <div id="illustration" class="page">
-        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/返回鍵.svg" alt="back" class="back-icon"></div>
+        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/資產 18.svg" alt="back" class="back-icon"></div>
         <div class="w-full h-full flex items-center justify-center">
             <div class="meta-text" style="font-size:18px;">illustration (coming soon)</div>
         </div>
     </div>
 
     <div id="project" class="page">
-        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/返回鍵.svg" alt="back" class="back-icon"></div>
+        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/資產 18.svg" alt="back" class="back-icon"></div>
         <div class="w-full h-full flex items-center justify-center">
             <div class="meta-text" style="font-size:18px;">motion (coming soon)</div>
         </div>
