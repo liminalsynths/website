@@ -158,26 +158,60 @@ body, .page, .clickable, button, a, img { cursor: none; }
         /* 更像檔案二：大量留白、文字不要太粗 */
         .meta-text { font-size: 12px; line-height: 1.35; color: #111; }
         #identity .identity-layout{
-            width: min(900px, 78vw);
-            display: flex;
+            width: min(980px, 86vw);
+            display: grid;
+            grid-template-columns: minmax(420px, 560px) minmax(220px, 320px);
             align-items: flex-start;
             justify-content: center;
             gap: clamp(32px, 6vw, 88px);
             margin: 0 auto;
-            transform: translateY(-6px);
+            transform: none;
         }
         #identity .about-box{
             transform: none;
             transform-origin: initial;
-            font-size: 18px;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        #identity .identity-concept-block{
+            width: min(560px, 100%);
+            background: #ffffff;
+            border: none;
+            padding: 0;
+            box-sizing: border-box;
+            display: block;
+        }
+        #identity .identity-links-panel{
+            display: inline-block;
+            background: #dbdcdc;
+            padding: 14px 14px 16px 14px;
+            box-sizing: border-box;
+        }
+        #identity .identity-mobile-copy{
+            display: none;
+        }
+        #identity .identity-based{
+            margin-top: 3em;
         }
         #identity .identity-links-col{
-            flex: 0 0 auto;
-            min-width: max-content;
-            padding-top: 2px;
+            min-width: 0;
+            padding-top: 0;
+            margin-top: 3em;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
         #identity .meta-text{
-            font-size: 18px;
+            font-size: 13px;
+            line-height: 1.35;
+        }
+        #identity .identity-desktop-head{
+            font-size: 15px;
+            line-height: 1.35;
+        }
+        #identity .identity-desktop-bio{
+            margin-top: 2em;
+            font-size: 11px;
             line-height: 1.35;
         }
         .small-title {
@@ -366,32 +400,85 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   .menu-link + .menu-link{ margin-top: -12px; }
 
   /* Identity: left-aligned text, horizontally centered block, smaller unified type */
+  #identity{
+    --identity-mobile-font-size: 13px;
+  }
   #identity .w-full.h-full.flex.items-center.justify-center{
     justify-content: center;
-    padding-left: 18px;
-    padding-right: 18px;
+    padding-left: 20px;
+    padding-right: 20px;
     box-sizing: border-box;
   }
   #identity .identity-layout{
-    width: min(420px, 86vw);
-    display: block;
+    width: min(430px, 88vw);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     transform: none;
   }
   #identity .about-box{
-    width: min(420px, 86vw) !important;
+    width: 100% !important;
     padding: 0 !important;
     transform: none !important;
-    font-size: 13px !important;
+    font-size: var(--identity-mobile-font-size) !important;
     line-height: 1.35 !important;
+  }
+  #identity .identity-concept-block,
+  #identity .identity-links-col{
+    display: none !important;
+  }
+  #identity .identity-mobile-copy{
+    display: block;
+    width: 100%;
+  }
+  #identity .identity-mobile-head{
+    font-size: 15px;
+    line-height: 1.35;
+  }
+  #identity .identity-mobile-bio{
+    margin-top: 2em;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+  #identity .identity-mobile-contact{
+    margin-top: 3em !important;
+    font-size: 13px;
+    line-height: 1.65;
+  }
+  #identity .identity-concept-block{
+    width: 100%;
+    padding: 14px 14px 16px 14px;
+    font-size: var(--identity-mobile-font-size) !important;
+  }
+  #identity .identity-links-panel{
+    display: inline-block;
+    width: auto;
+    max-width: 100%;
+    padding: 12px 12px 14px 12px;
+    box-sizing: border-box;
+  }
+  #identity .identity-based{
+    margin-top: 1.15em;
   }
   #identity .identity-links-col{
+    width: 100%;
     min-width: 0;
     padding-top: 0;
-    margin-top: 46px;
+    margin-top: 0;
+    align-items: flex-start;
   }
   #identity .meta-text{
-    font-size: 13px !important;
+    font-size: var(--identity-mobile-font-size) !important;
     line-height: 1.35 !important;
+  }
+  #identity .identity-links-col a,
+  #identity .identity-links-col .identity-based{
+    font-size: var(--identity-mobile-font-size) !important;
+  }
+  #identity .identity-links-col .identity-based{
+    display: block;
+    width: 100%;
+    text-align: left !important;
   }
 
   /* Detail layout: stack and fit */
@@ -775,18 +862,45 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
         <div class="w-full h-full flex items-center justify-center">
             <div class="identity-layout">
                 <div class="about-box text-left text-2xl" style="width: min(560px, 46vw); line-height:1.45; background:transparent;">
-                    in the liminal state between<br>
-                    medium and concept, synths emerge.<br><br>
-                    features visual creations<br>
-                    in various forms.<br><br>
-                    based in taiwan.
+                    <div class="identity-concept-block">
+                        <div class="identity-desktop-head">
+                            in the liminal state<br>
+                            between medium and concept,<br>
+                            synths emerge.
+                        </div>
+                        <div class="identity-desktop-bio">
+                            Liminalsynth is a personal creative alias.<br>
+                            Working across graphic, motion, projection mapping.<br>
+                            <br>
+                            Based in Taiwan.
+                        </div>
+                    </div>
+                    <div class="identity-mobile-copy">
+                        <div class="identity-mobile-head">
+                            in the liminal state<br>
+                            between medium and concept,<br>
+                            synths emerge.
+                        </div>
+                        <div class="identity-mobile-bio">
+                            Liminalsynth is a personal creative alias.<br>
+                            Working across graphic, motion, projection mapping.<br>
+                            <br>
+                            Based in Taiwan.
+                        </div>
+                        <div class="identity-mobile-contact">
+                            <a href="mailto:liminalsynths@gmail.com" class="clickable" style="color:inherit; text-decoration:none;">liminalsynths@gmail.com</a><br>
+                            <a href="https://www.instagram.com/liminalsynths/" target="_blank" rel="noopener noreferrer" class="clickable" style="color:inherit; text-decoration:none;">@liminalsynths</a>
+                        </div>
+                    </div>
                 </div>
                 <div class="identity-links identity-links-col" id="identityLinks">
-                    <div class="meta-text">
-                        <a href="mailto:liminalsynths@gmail.com" class="clickable" style="color:inherit; text-decoration:none;">liminalsynths@gmail.com</a>
-                    </div>
-                    <div class="meta-text" style="margin-top:10px;">
-                        <a href="https://www.instagram.com/liminalsynths/" target="_blank" rel="noopener noreferrer" class="clickable" style="color:inherit; text-decoration:none;">@liminalsynths</a>
+                    <div class="identity-links-panel">
+                        <div class="meta-text">
+                            <a href="mailto:liminalsynths@gmail.com" class="clickable" style="color:inherit; text-decoration:none;">liminalsynths@gmail.com</a>
+                        </div>
+                        <div class="meta-text" style="margin-top:10px;">
+                            <a href="https://www.instagram.com/liminalsynths/" target="_blank" rel="noopener noreferrer" class="clickable" style="color:inherit; text-decoration:none;">@liminalsynths</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1052,14 +1166,16 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
         pendingTypeStarts.add(t);
       };
 
-      const first = window.setTimeout(() => {
-        pendingTypeStarts.delete(first);
-        step();
-      }, tick);
-      pendingTypeStarts.add(first);
+      step();
     };
 
     if (pageEl.id === 'identity') {
+      const isMobileView = window.innerWidth < 769;
+      if (isMobileView) {
+        const mobileTargets = collectTargets(pageEl, '#identityLinks, .identity-concept-block');
+        startStream(mobileTargets);
+        return;
+      }
       const conceptTargets = collectTargets(pageEl, '#identityLinks');
       const linksTargets = collectTargets(document.getElementById('identityLinks'));
       startStream(conceptTargets);
