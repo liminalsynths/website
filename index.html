@@ -161,7 +161,7 @@ body, .page, .clickable, button, a, img { cursor: none; }
             width: min(980px, 86vw);
             display: grid;
             grid-template-columns: minmax(420px, 560px) minmax(220px, 320px);
-            align-items: flex-start;
+            align-items: end;
             justify-content: center;
             gap: clamp(32px, 6vw, 88px);
             margin: 0 auto;
@@ -183,8 +183,8 @@ body, .page, .clickable, button, a, img { cursor: none; }
         }
         #identity .identity-links-panel{
             display: inline-block;
-            background: #dbdcdc;
-            padding: 14px 14px 16px 14px;
+            background: transparent;
+            padding: 0;
             box-sizing: border-box;
         }
         #identity .identity-mobile-copy{
@@ -196,7 +196,7 @@ body, .page, .clickable, button, a, img { cursor: none; }
         #identity .identity-links-col{
             min-width: 0;
             padding-top: 0;
-            margin-top: 3em;
+            margin-top: 0;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
@@ -250,7 +250,7 @@ body, .page, .clickable, button, a, img { cursor: none; }
             font-kerning: inherit;
             text-rendering: inherit;
             pointer-events: none;
-            transform: translateZ(0);
+            transform: translateY(1px) translateZ(0);
         }
         #detail .work-title::before{
             color: transparent;
@@ -454,6 +454,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     display: inline-block;
     width: auto;
     max-width: 100%;
+    background: #dbdcdc;
     padding: 12px 12px 14px 12px;
     box-sizing: border-box;
   }
@@ -628,11 +629,23 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   #detail .detail-image-stack{
     display: block;
     width: 100vw;
+    position: relative;
+    overflow: hidden;
   }
   #detail .detail-image-stack img{
     display: block;
     width: 100vw;
     height: auto;
+  }
+  #detail .detail-reveal-mask{
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    display: grid;
+    pointer-events: none;
+  }
+  #detail .detail-reveal-cell{
+    opacity: 1;
   }
   #detail #detailImage{
     display: none;
@@ -659,21 +672,21 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   }
   /* Restore previous desktop type scale distribution for work info */
   #detail .small-title{
-    font-size: 33px;
+    font-size: 31px;
     line-height: 1.14;
     padding-top: 0.08em;
     padding-bottom: 0.04em;
   }
   #detail #detailMeta{
-    font-size: 18px;
+    font-size: 17px;
     line-height: 1.22;
   }
   #detail #detailDesc{
-    font-size: 15px;
+    font-size: 14px;
     line-height: 1.32;
   }
   #detail #detailExtra{
-    font-size: 15px;
+    font-size: 14px;
     line-height: 1.32;
   }
   #detail .detail-title-wrap.detail-copy-group{
@@ -681,6 +694,17 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   }
   #detail .detail-meta-wrap.detail-copy-group{
     transform-origin: bottom left;
+  }
+  /* Block reveal mask for detail images (desktop + mobile) */
+  #detail .detail-reveal-mask{
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    display: grid;
+    pointer-events: none;
+  }
+  #detail .detail-reveal-cell{
+    opacity: 1;
   }
 
   /* Desktop detail zones are max boundaries (not alignment targets) */
@@ -747,6 +771,8 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     display: block;
     width: 100%;
     line-height: 0;
+    position: relative;
+    overflow: hidden;
   }
   #detail .detail-image-stack img{
     display: block;
@@ -870,7 +896,8 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
                         </div>
                         <div class="identity-desktop-bio">
                             Liminalsynth is a personal creative alias.<br>
-                            Working across graphic, motion, projection mapping.<br>
+                            Working across graphic, motion,<br>
+                            projection mapping.<br>
                             <br>
                             Based in Taiwan.
                         </div>
@@ -883,7 +910,8 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
                         </div>
                         <div class="identity-mobile-bio">
                             Liminalsynth is a personal creative alias.<br>
-                            Working across graphic, motion, projection mapping.<br>
+                            Working across graphic, motion,<br>
+                            projection mapping.<br>
                             <br>
                             Based in Taiwan.
                         </div>
@@ -1346,6 +1374,43 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     detailPage.style.setProperty('--detail-mobile-info-h', `${h + 8}px`);
   }
 
+  function clearDetailBlockReveal(containerEl) {
+    if (!containerEl) return;
+    const existing = containerEl.querySelector('.detail-reveal-mask');
+    if (existing) existing.remove();
+  }
+
+  function applyDetailBlockReveal(containerEl, bgColor = '#ffffff') {
+    if (!containerEl) return;
+    clearDetailBlockReveal(containerEl);
+    const rows = 12;
+    const cols = 16;
+    const cellDelay = 5;
+    const mask = document.createElement('div');
+    mask.className = 'detail-reveal-mask';
+    mask.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    mask.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+
+    for (let r = 0; r < rows; r += 1) {
+      for (let c = 0; c < cols; c += 1) {
+        const cell = document.createElement('span');
+        cell.className = 'detail-reveal-cell';
+        cell.style.backgroundColor = bgColor;
+        const delay = (r * cols + c) * cellDelay;
+        mask.appendChild(cell);
+        window.setTimeout(() => {
+          cell.style.opacity = '0';
+        }, delay);
+      }
+    }
+
+    containerEl.appendChild(mask);
+    const totalMs = rows * cols * cellDelay + 80;
+    window.setTimeout(() => {
+      if (mask.parentNode) mask.remove();
+    }, totalMs);
+  }
+
   function renderPosterDetail(key, requestedIndex = 0) {
     const work = POSTER_WORKS[key];
     const detailPage = document.getElementById('detail');
@@ -1467,7 +1532,10 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
 
     if (stackEl) {
       stackEl.innerHTML = '';
-      const mobileImages = images.length ? images : [buildPlaceholderDataURI(work)];
+      const mobileImages = images.length ? [...images] : [buildPlaceholderDataURI(work)];
+      if (window.innerWidth < 769 && key === 'super_power_100' && mobileImages.length > 1) {
+        mobileImages[1] = 'image/works/資產 818@2x.png';
+      }
       mobileImages.forEach((src, idx) => {
         const stackImg = document.createElement('img');
         stackImg.src = src;
@@ -1543,6 +1611,20 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
       }
     }
 
+    if (stackEl) {
+      const revealBg = detailPage ? (window.getComputedStyle(detailPage).backgroundColor || '#ffffff') : '#ffffff';
+      const firstImg = stackEl.querySelector('img');
+      const runReveal = () => window.requestAnimationFrame(() => applyDetailBlockReveal(stackEl, revealBg));
+      if (!firstImg) {
+        runReveal();
+      } else if (firstImg.complete && firstImg.naturalWidth > 0) {
+        runReveal();
+      } else {
+        firstImg.addEventListener('load', runReveal, { once: true });
+        firstImg.addEventListener('error', runReveal, { once: true });
+      }
+    }
+
     updateDetailGalleryControls(work, images.length, safeIndex);
     window.requestAnimationFrame(syncMobileDetailInfoOffset);
     window.setTimeout(syncMobileDetailInfoOffset, 120);
@@ -1580,8 +1662,8 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
 
   function openPoster(key) {
     ensurePosterPlaceholders();
-    renderPosterDetail(key);
     goTo('detail');
+    renderPosterDetail(key);
     const detailPage = document.getElementById('detail');
     if (detailPage) detailPage.scrollTop = 0;
     window.requestAnimationFrame(syncDetailImageFit);
