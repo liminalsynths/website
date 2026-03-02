@@ -526,6 +526,9 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
   }
+  #poster .poster-col-track{
+    will-change: transform;
+  }
   #poster .poster-card{
     width: 100%;
     border: 0;
@@ -972,8 +975,8 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
                 <div class="poster-card clickable" onclick="openPoster('melite')"><img src="image/works/melite/cover.jpg" alt="melite"></div>
                 <div class="poster-card clickable" onclick="openPoster('pearl')"><img src="image/works/pearl/cover.png" alt="pearl"></div>
                 <div class="poster-card clickable" onclick="openPoster('wonderland')"><img src="image/works/wonderland.png" alt="wonderland"></div>
+                <div class="poster-card clickable" onclick="openPoster('super_power_100')"><img src="image/works/ezgif.com-animated-gif-maker.gif" alt="super power 100"></div>
                 <div class="poster-card clickable" onclick="openPoster('meteorite')"><img src="image/works/meteorite/cover.png" alt="meteorite"></div>
-                <div class="poster-card clickable" onclick="openPoster('passion')"><img src="image/works/passion/cover.jpg" alt="passion"></div>
             </div>
             <div class="poster-col">
                 <div class="poster-card clickable" onclick="openPoster('parallel_paradise')"><img src="image/works/parallel paradise.png" class="pp-black-bg" alt="parallel paradise"></div>
@@ -984,7 +987,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
                 <div class="poster-card clickable" onclick="openPoster('mirror')"><img src="image/works/mirror/cover.jpg" alt="mirror"></div>
                 <div class="poster-card clickable" onclick="openPoster('iridescent')"><img src="image/works/iridescent/cover.jpg" alt="iridescent"></div>
                 <div class="poster-card clickable" onclick="openPoster('yungboi_harris')"><img src="image/works/yungboi-harris/cover.jpg" alt="yungboi harris"></div>
-                <div class="poster-card clickable" onclick="openPoster('super_power_100')"><img src="image/works/ezgif.com-animated-gif-maker.gif" alt="super power 100"></div>
+                <div class="poster-card clickable" onclick="openPoster('passion')"><img src="image/works/passion/cover.jpg" alt="passion"></div>
             </div>
         </div>
     </div>
@@ -1229,6 +1232,9 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     if (pageId === 'poster') {
       ensurePosterPlaceholders();
       initPosterInteraction();
+      startPosterMobileAutoScroll();
+    } else {
+      stopPosterMobileAutoScroll();
     }
   }
   window.goTo = goTo;
@@ -1814,6 +1820,105 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
 
   // -------- Poster interactions: drag drift + collision bounce ---: drag drift + collision bounce --------
   let posterInited = false;
+  let posterMobileAutoRaf = null;
+  let posterMobileAutoLastTs = 0;
+  let posterMobileAutoStoppedByUser = false;
+  let posterMobileAutoCols = [];
+
+  function stopPosterMobileAutoScroll() {
+    if (posterMobileAutoRaf) {
+      window.cancelAnimationFrame(posterMobileAutoRaf);
+      posterMobileAutoRaf = null;
+    }
+    if (posterMobileAutoCols.length) {
+      posterMobileAutoCols.forEach((item) => {
+        const col = item.col;
+        const track = item.track;
+        col.style.overflowY = '';
+        col.scrollTop = Math.round(item.pos || 0);
+        if (track) track.style.transform = '';
+      });
+    }
+    posterMobileAutoLastTs = 0;
+    posterMobileAutoCols = [];
+  }
+
+  function startPosterMobileAutoScroll() {
+    stopPosterMobileAutoScroll();
+    const poster = document.getElementById('poster');
+    if (!poster) return;
+    if (window.innerWidth >= 769) return;
+    const cols = Array.from(poster.querySelectorAll('.poster-mobile .poster-col'));
+    if (!cols.length) return;
+
+    posterMobileAutoStoppedByUser = false;
+    const colSpeeds = [10, 7]; // px/s, left column faster than right
+    posterMobileAutoCols = cols.map((col, idx) => {
+      let track = col.querySelector('.poster-col-track');
+      if (!track) {
+        track = document.createElement('div');
+        track.className = 'poster-col-track';
+        while (col.firstChild) track.appendChild(col.firstChild);
+        col.appendChild(track);
+      }
+      col.scrollTop = 0;
+      col.style.overflowY = 'hidden';
+      track.style.transform = 'translate3d(0, 0, 0)';
+      return {
+        col,
+        track,
+        pos: 0,
+        speed: colSpeeds[idx % colSpeeds.length]
+      };
+    });
+
+    cols.forEach((col) => {
+      if (col.dataset.autoscrollBound === '1') return;
+      const stopByUser = () => {
+        posterMobileAutoStoppedByUser = true;
+        stopPosterMobileAutoScroll();
+      };
+      col.addEventListener('touchmove', stopByUser, { passive: true });
+      col.addEventListener('wheel', stopByUser, { passive: true });
+      col.dataset.autoscrollBound = '1';
+    });
+
+    const step = (ts) => {
+      if (!poster.classList.contains('active')) {
+        stopPosterMobileAutoScroll();
+        return;
+      }
+      if (window.innerWidth >= 769 || posterMobileAutoStoppedByUser) {
+        stopPosterMobileAutoScroll();
+        return;
+      }
+      if (!posterMobileAutoLastTs) posterMobileAutoLastTs = ts;
+      const dt = Math.min(34, ts - posterMobileAutoLastTs);
+      posterMobileAutoLastTs = ts;
+
+      let allAtBottom = true;
+      let hasScrollableColumn = false;
+      posterMobileAutoCols.forEach((item) => {
+        const col = item.col;
+        const track = item.track;
+        const maxScroll = Math.max(0, col.scrollHeight - col.clientHeight);
+        if (maxScroll <= 0) return;
+        hasScrollableColumn = true;
+        item.pos = Math.min(maxScroll, item.pos + (item.speed * dt) / 1000);
+        track.style.transform = `translate3d(0, ${(-item.pos).toFixed(3)}px, 0)`;
+        if (item.pos < maxScroll - 0.1) allAtBottom = false;
+      });
+
+      // Keep waiting while images are still loading and columns are not scrollable yet.
+      if (hasScrollableColumn && allAtBottom) {
+        stopPosterMobileAutoScroll();
+        return;
+      }
+      posterMobileAutoRaf = window.requestAnimationFrame(step);
+    };
+
+    posterMobileAutoRaf = window.requestAnimationFrame(step);
+  }
 
   function initPosterInteraction() {
     if (posterInited) return;
