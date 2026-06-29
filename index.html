@@ -8,7 +8,7 @@
     <style>
                 @font-face{
             font-family: "NeueMetanaNext";
-            src: url("NeueMetanaNext-SemiBold.otf") format("opentype");
+            src: url("font/NeueMetanaNext-SemiBold.otf") format("opentype");
             font-weight: 600;
             font-style: normal;
         }
@@ -53,7 +53,7 @@
         #poster .w-72{ width: clamp(11.5rem, 22vmin, 18rem); }
 
 
-        /* 自訂滑鼠游標（SVG/mouse.svg）— 隱藏系統游標，使用 #customCursor 跟隨滑鼠 */
+        /* 自訂滑鼠游標（svg/mouse.svg）— 隱藏系統游標，使用 #customCursor 跟隨滑鼠 */
 body, .page, .clickable, button, a, img { cursor: none; }
 .page {
             display: none;
@@ -83,8 +83,68 @@ body, .page, .clickable, button, a, img { cursor: none; }
 
 
         .landing-logo{ width: min(720px, 80vw); height: auto; display:block; }
+        .landing-content{
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .landing-enter-desktop{
+            position: fixed;
+            top: 44px;
+            right: 44px;
+            left: auto;
+            background: transparent;
+            border: 0;
+            padding: 0;
+            cursor: none;
+            z-index: 120;
+        }
+        .landing-enter-mobile{
+            display: none;
+        }
+        .landing-enter-icon{
+            width: 51px;
+            height: 51px;
+            display: block;
+        }
 
         .landing-stage{ position:relative; width:100%; height:100%; min-height:100dvh; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+
+        /* landing footer bar */
+        .landing-footer-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 120px; /* enough room for tallest col */
+            z-index: 10;
+        }
+        .landing-footer-col {
+            position: absolute;
+            bottom: 40px;
+            font-family: 'NeueMetanaNext', sans-serif;
+            color: #111;
+            line-height: 1.45;
+        }
+        .landing-footer-concept {
+            font-size: 14px;
+            left: 44px;
+            white-space: nowrap;
+        }
+        .landing-footer-bio {
+            font-size: 11px;
+            /* align with logo left edge: logo width = min(720px,80vw), centered */
+            left: calc((100vw - min(720px, 80vw)) / 2);
+        }
+        .landing-footer-contact {
+            font-size: 11px;
+            right: 10px;
+            text-align: left;
+            width: 240px; /* fixed width so typing goes left→right within box */
+        }
         .landing-bg{ position:absolute; inset:0; width:100%; height:100%; z-index:0; }
         .landing-bg-white{ background:#fff; }
         .landing-flash{
@@ -133,11 +193,11 @@ body, .page, .clickable, button, a, img { cursor: none; }
 
         .back-arrow { position: absolute; top: 44px; right: 44px; z-index: 100; }
         .back-icon{
-            width: 51px;
-            height: 51px;
+            width: 56px;
+            height: 56px;
             display:block;
         }
-        .menu-back-icon{ width: 90px; height: 90px; }
+        .menu-back-icon{ width: 99px; height: 99px; }
 
         /* 檔案二的陰影字（頁3/頁6） */
         .shadow-type {
@@ -269,7 +329,7 @@ body, .page, .clickable, button, a, img { cursor: none; }
         .menu-hotspots{
             position:absolute; inset:0;
             display:grid;
-            grid-template-rows: repeat(4, 1fr);
+            grid-template-rows: repeat(2, 1fr);
             background: transparent;
         }
         #identity .identity-links{
@@ -288,6 +348,17 @@ body, .page, .clickable, button, a, img { cursor: none; }
             padding:0;
             margin:0;
         }
+        .nav-svg-wrap{ position:relative; width:min(612px, 70vw); }
+        .nav-svg-wrap svg{ width:100%; height:auto; display:block; user-select:none; }
+        .nav-hotspots{
+            position:absolute; inset:0;
+            display:grid;
+            grid-template-rows: repeat(2, 1fr);
+            background: transparent;
+        }
+        /* hover: dark fill → blue (targets the foreground <g> via fill attribute) */
+        #nav-commercial.nav-hovered > g:last-child,
+        #nav-personal.nav-hovered > g:last-child { fill: #3d82ff; }
         /* Ensure no drop shadow on detail images */
         .detail-image{ box-shadow:none !important; filter:none !important; }
         .detail-gallery-nav{
@@ -343,21 +414,30 @@ body, .page, .clickable, button, a, img { cursor: none; }
 #customCursor{
   position: fixed;
   top: 0; left: 0;
-  width: 16px; height: 16px;
+  width: 28px; height: 28px;
   pointer-events: none;
   z-index: 9999;
   transform: translate(-100px, -100px);
   user-select: none;
   -webkit-user-drag: none;
-  mix-blend-mode: normal;
-  filter: none;
+  mix-blend-mode: difference;
+  filter: brightness(0) invert(1);
 }
 #customCursor.invert{
   mix-blend-mode: difference;
   filter: brightness(0) invert(1);
 }
+/* On motion video pages, disable mix-blend-mode to prevent video darkening */
+body.on-md-video-page #customCursor {
+  mix-blend-mode: normal;
+  filter: brightness(0) invert(1);
+  transition: opacity 0.7s ease;
+}
+body.on-md-video-page #customCursor.md-hidden {
+  opacity: 0;
+}
 #customCursor.down{
-  transform: translate(-100px, -100px) scale(0.88);
+  transform: scale(0.88);
 }
 
 /* -----------------------------
@@ -383,7 +463,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   :root{
     --mobile-back-top: max(28px, calc(env(safe-area-inset-top) + 10px));
     --mobile-back-right: 18px;
-    --mobile-back-size: 41px;
+    --mobile-back-size: 45px;
   }
   /* allow the UI to breathe on mobile without touching desktop */
   .back-arrow{
@@ -393,7 +473,30 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     transform: translateX(-50%);
   }
   .back-icon{ width: var(--mobile-back-size); height: var(--mobile-back-size); }
-  .menu-back-icon{ width: 78px; height: 78px; }
+  .menu-back-icon{ width: 86px; height: 86px; }
+  #landing .landing-enter-desktop{
+    display: none;
+  }
+  #landing .landing-enter-mobile{
+    position: absolute;
+    display: block;
+    top: var(--back-arrow-y-mobile);
+    left: 80%;
+    transform: translateX(-50%);
+    z-index: 120;
+    background: transparent;
+    border: 0;
+    padding: 0;
+  }
+  .landing-footer-bar { height: auto; padding-bottom: 16px; }
+  .landing-footer-col { position: static; display: block; }
+  .landing-footer-concept { font-size: 12px; padding: 0 18px; white-space: normal; }
+  .landing-footer-bio { padding: 8px 18px 0; left: auto; }
+  .landing-footer-contact { right: auto; padding: 8px 18px 0; }
+  #landing .landing-enter-icon{
+    width: var(--mobile-back-size);
+    height: var(--mobile-back-size);
+  }
 
   /* Menu scaling (keeps the same design, just fits screen) */
   .menu-swap{ width: min(310px, 52vw); }
@@ -723,16 +826,16 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     width: auto !important;
   }
   #detail .detail-title-wrap{
-    left: clamp(56px, 6vw, 110px) !important;
-    top: clamp(56px, 8vh, 120px) !important;
+    left: 44px !important;
+    top: 44px !important;
     right: auto !important;
     bottom: auto !important;
     max-width: min(26vw, 380px);
     overflow: visible;
   }
   #detail .detail-meta-wrap{
-    left: clamp(56px, 6vw, 110px) !important;
-    bottom: clamp(56px, 8vh, 120px) !important;
+    left: 44px !important;
+    bottom: 44px !important;
     top: auto !important;
     right: auto !important;
     width: min(25vw, 360px) !important;
@@ -855,39 +958,621 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   #poster .poster-desktop > img:nth-child(12){ width: 14.5rem; }
   #poster .poster-desktop > img:nth-child(13){ width: 16.5rem; }
 }
+
+
+/* ===== Motion landing page banners ===== */
+.project-banner {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 1;
+  filter: brightness(0.8);
+}
+.project-banner.active { opacity: 1; }
+
+/* ===== Motion landing logo scale ===== */
+#project .project-logo {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ===== Motion detail pages ===== */
+.md-page {
+  background: #000;
+  overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+.md-page .meta-text { color: #fff; }
+.md-page .small-title { color: #fff; }
+
+/* Back arrow: fixed above everything, fades with overlay */
+.md-page .back-arrow {
+  position: fixed;
+  top: 44px; right: 44px;
+  z-index: 200;
+  transition: opacity 0.7s ease;
+}
+.md-page .back-arrow.md-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* work-title stroke: inner=black, middle=white, outer=grey */
+.md-page .work-title {
+  --title-stroke-dark: 9px;
+  --title-stroke-light: 18px;
+  position: relative; z-index: 0;
+  display: inline-block;
+  color: #000;
+  text-shadow: none;
+  letter-spacing: -0.07em;
+  line-height: 0.96;
+  white-space: pre-wrap;
+  font-kerning: none;
+  text-rendering: geometricPrecision;
+}
+.md-page .work-title::before,
+.md-page .work-title::after {
+  content: attr(data-title);
+  position: absolute; inset: 0;
+  font: inherit; letter-spacing: inherit; line-height: inherit;
+  white-space: inherit; font-kerning: inherit; text-rendering: inherit;
+  pointer-events: none;
+  transform: translateY(1px) translateZ(0);
+}
+.md-page .work-title::before {
+  color: transparent;
+  -webkit-text-stroke: var(--title-stroke-dark) #ffffff;
+  z-index: -1;
+}
+.md-page .work-title::after {
+  color: transparent;
+  -webkit-text-stroke: var(--title-stroke-light) #dbdcdc;
+  z-index: -2;
+}
+
+/* Fullscreen video section */
+.md-video-section {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+.md-video-full {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: block;
+  border: none;
+}
+
+/* Overlay info on video */
+.md-overlay-info {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 100vh; height: 100dvh;
+  z-index: 10;
+  pointer-events: none;
+  transition: opacity 0.7s ease;
+}
+.md-overlay-info.md-hidden { opacity: 0; }
+.md-title-area {
+  position: absolute;
+  left: 44px; top: 44px;
+  max-width: min(26vw, 380px);
+  overflow: visible;
+}
+.md-meta-area {
+  position: absolute;
+  left: 44px; bottom: 180px;
+  width: min(25vw, 360px);
+}
+
+/* Photos scroll section */
+.md-photos-section {
+  width: 100%;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5vw;
+  padding: 2.5vw;
+  box-sizing: border-box;
+}
+.md-photos-section > img {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.md-photo-pair {
+  display: flex;
+  gap: 2.5vw;
+  width: 100%;
+  flex-shrink: 0;
+}
+.md-photo-pair img {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  height: 100vh;
+  object-fit: cover;
+}
+
+/* Desktop text sizes */
+@media (min-width: 769px) {
+  .md-page .md-title { font-size: 31px; line-height: 1.14; padding-top: 0.08em; }
+  .md-page .md-meta-year { font-size: 17px; line-height: 1.22; }
+  .md-page .md-meta-type { font-size: 17px; line-height: 1.22; }
+  .md-page .md-desc { font-size: 10px; line-height: 1.35; margin-top: 8px; }
+}
+
+/* ===== Motion footer info ===== */
+.md-footer-info {
+  background: #000;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 48px 44px 64px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.md-footer-name  { flex-shrink: 0; }
+.md-footer-meta  { flex-shrink: 0; }
+.md-footer-meta .md-meta-year { color: #fff; display: block; }
+.md-footer-meta .md-meta-type { color: #fff; display: block; margin-top: 4px; }
+.md-footer-desc  { max-width: 35%; }
+.md-footer-desc .md-desc { color: #fff; }
+
+@media (max-width: 768px) {
+  .md-footer-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 28px 20px 44px;
+  }
+}
+
+/* ===== Applied footer override ===== */
+#applied .md-footer-info {
+  background: #f2f2f2;
+}
+#applied .md-footer-info .md-meta-year,
+#applied .md-footer-info .md-meta-type,
+#applied .md-footer-info .md-desc { color: #000 !important; }
+
+#applied .md-footer-info .work-title {
+  --title-stroke-dark: 12px;
+  --title-stroke-light: 18px;
+  position: relative; z-index: 0;
+  display: inline-block;
+  color: transparent;
+  text-shadow: 0 -1.2px 0 #ffffff;
+  letter-spacing: -0.07em;
+  line-height: 0.96;
+  white-space: pre-wrap;
+  font-kerning: none;
+  text-rendering: geometricPrecision;
+}
+#applied .md-footer-info .work-title::before,
+#applied .md-footer-info .work-title::after {
+  content: attr(data-title);
+  position: absolute; inset: 0;
+  font: inherit; letter-spacing: inherit; line-height: inherit;
+  white-space: inherit; font-kerning: inherit; text-rendering: inherit;
+  pointer-events: none;
+  transform: translateY(1px) translateZ(0);
+}
+#applied .md-footer-info .work-title::before {
+  color: transparent;
+  -webkit-text-stroke: var(--title-stroke-dark) #140305;
+  z-index: -1;
+}
+#applied .md-footer-info .work-title::after {
+  color: transparent;
+  -webkit-text-stroke: var(--title-stroke-light) #dbdcdc;
+  z-index: -2;
+}
+
+/* ===== Applied page ===== */
+#applied .back-arrow { position: fixed; top: 44px; right: 44px; z-index: 200; }
+
+.applied-clip-wrap {
+  overflow: hidden;
+  /* hero (20.8912%) hidden; shift inner up so content starts at 0.
+     remaining content ends at ~(87.06-20.89)% × 283.6229vw ≈ 190vw */
+  height: 190.25vw;
+}
+.applied-layout {
+  position: relative;
+  width: 100%;
+  padding-bottom: 283.6229%; /* 4084/1440 */
+}
+.applied-inner {
+  position: absolute;
+  inset: 0;
+  /* shift all images up by hero height so content starts immediately */
+  transform: translateY(-20.8912%);
+}
+.applied-px-img {
+  position: absolute;
+  object-fit: cover;
+  display: block;
+  border-radius: 17px;
+}
+.applied-hero { border-radius: 0 !important; }
+
+@media (max-width: 768px) {
+  #applied .back-arrow { top: max(16px, env(safe-area-inset-top)); right: 16px; }
+  .applied-clip-wrap { height: auto; overflow: visible; }
+  .applied-layout { padding-bottom: 0; }
+  .applied-inner {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+    transform: none;
+    padding: 4px;
+  }
+  .applied-px-img {
+    position: static;
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: unset;
+    object-fit: cover;
+  }
+  .applied-hero {
+    grid-column: 1 / -1;
+    width: 100% !important;
+    height: auto !important;
+  }
+  .applied-hero { border-radius: 0 !important; }
+}
+
+/* ===== Motion mobile ===== */
+@media (max-width: 768px) {
+
+  /* --- Landing: stack logos vertically --- */
+  #project-logos {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 36px;
+  }
+  .project-logo-wrap {
+    position: static !important;
+    transform: none !important;
+  }
+  #project [data-banner="anka"]   .project-logo { height: 86px !important; }
+  #project [data-banner="sirius"] .project-logo { height: 27px !important; }
+  #project [data-banner="thread"] .project-logo { height: 86px !important; }
+
+  /* --- Detail: back arrow fixed top-right --- */
+  .md-page .back-arrow {
+    top: max(16px, env(safe-area-inset-top));
+    right: 16px;
+    left: auto;
+    transform: none;
+  }
+  .md-page .back-arrow.md-hidden { opacity: 0; }
+
+  /* --- Video section: just the video, 16:9 --- */
+  .md-video-section {
+    height: auto !important;
+  }
+  .md-video-full {
+    position: static !important;
+    width: 100%;
+    height: 56.25vw;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Info block: sticky at top, black background, natural height */
+  .md-overlay-info {
+    position: sticky !important;
+    top: 0;
+    height: auto !important;
+    z-index: 100;
+    background: #000;
+    padding: 20px 20px 18px;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transition: none !important;
+    display: flex;
+    flex-direction: column;
+  }
+  .md-overlay-info.md-hidden { opacity: 1 !important; }
+
+  .md-title-area {
+    position: static !important;
+    max-width: 100% !important;
+    padding-right: 44px; /* space for back arrow */
+    overflow: visible;
+  }
+  .md-meta-area {
+    position: static !important;
+    width: 100% !important;
+    margin-top: 12px;
+  }
+
+  /* --- Text sizes --- */
+  .md-page .md-title     { font-size: 22px; line-height: 1.1; }
+  .md-page .md-meta-year { font-size: 13px; line-height: 1.3; }
+  .md-page .md-meta-type { font-size: 13px; line-height: 1.3; }
+  .md-page .md-desc      { font-size: 10px; line-height: 1.4; margin-top: 8px; }
+
+  /* --- Photos --- */
+  .md-photos-section > img { height: 60vw; }
+  .md-photo-pair           { gap: 2vw; }
+  .md-photo-pair img       { height: 50vw; }
+}
+
+/* ===== Applied top bar ===== */
+.applied-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: transparent;
+  /* 3-column grid: left-space | logo | right-space */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;   /* top-align tabs and meta with logo top */
+  padding: 44px 44px 24px;
+  box-sizing: border-box;
+  width: 100%;
+}
+/* ---- tabs: left-biased in left column ---- */
+.applied-tabs {
+  justify-self: center;
+  transform: translateX(-40px);
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 52px;
+}
+.applied-tab-item svg {
+  height: 25px;
+  width: auto;
+  display: block;
+  cursor: none;
+}
+/* inactive: yellow/black */
+.applied-tab-item svg .cls-1 { fill: #ffbf42; }
+.applied-tab-item svg .cls-2 { fill: #211714; }
+/* active: blue/gray */
+.applied-tab-item.active svg .cls-1 { fill: #3d82ff; }
+.applied-tab-item.active svg .cls-2 { fill: #dbdede; }
+/* ---- center logo: plain SVG, no decoration ---- */
+.applied-logo-card {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin-top: -18px;
+}
+.applied-logo-card img {
+  width: 294px;
+  height: auto;
+  display: block;
+}
+/* ---- meta: centred in right column ---- */
+.applied-topbar-meta {
+  justify-self: center;
+  transform: translateX(-40px);
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  align-items: flex-start;
+}
+.applied-topbar-year {
+  font-family: 'NeueMetanaNext', sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #140305;
+  white-space: nowrap;
+}
+.applied-topbar-desc {
+  font-family: 'NeueMetanaNext', sans-serif;
+  font-size: 10px;
+  line-height: 1.5;
+  color: #140305;
+  max-width: 230px;
+}
+/* back arrow: restore original fixed position (same as all other pages) */
+#applied .back-arrow {
+  position: fixed;
+  top: 44px;
+  right: 44px;
+  z-index: 200;
+}
+
+/* ===== Photo hover + lightbox ===== */
+.applied-px-img:not(.applied-hero) {
+  transition: transform 0.25s ease;
+  cursor: none;
+}
+.applied-px-img:not(.applied-hero):hover {
+  transform: scale(1.05);
+  z-index: 5;
+}
+
+#photo-lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(0,0,0,0.5);
+  align-items: center;
+  justify-content: center;
+}
+#photo-lightbox.open {
+  display: flex;
+}
+#photo-lightbox img {
+  max-width: 95vw;
+  max-height: 95vh;
+  object-fit: contain;
+  display: block;
+  transform: none !important;
+  border-radius: 17px;
+}
+#photo-lightbox-close {
+  position: fixed;
+  top: 44px;
+  right: 44px;
+  z-index: 9001;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: none;
+  line-height: 0;
+}
+#photo-lightbox-close img {
+  width: 56px;
+  height: 56px;
+  display: block;
+  filter: invert(1);
+}
 </style>
 </head>
 <body>
 
-    <!-- landing（對齊檔案二：頁6） -->
+    <!-- landing -->
     <div id="landing" class="page active">
         <div class="landing-stage">
             <div class="landing-bg landing-bg-white" aria-hidden="true"></div>
-            <img src="SVG/liminalsynths-logo.svg" id="landingLogo" class="landing-logo clickable" alt="liminalsynths" onclick="goTo('menu')">
+
+            <!-- top-right enter button -->
+            <button class="landing-enter-desktop clickable" type="button" aria-label="enter menu" onclick="goTo('nav')">
+                <img src="svg/nav-arrow.svg" alt="enter menu" class="landing-enter-icon">
+            </button>
+
+            <!-- centered logo -->
+            <div class="landing-content">
+                <img src="svg/liminalsynths-logo.svg" id="landingLogo" class="landing-logo clickable" alt="liminalsynths" onclick="goTo('nav')">
+            </div>
+
+            <!-- bottom info bar -->
+            <div class="landing-footer-bar">
+                <div class="landing-footer-col landing-footer-concept">
+                    in the liminal state<br>
+                    between medium and concept,<br>
+                    synths emerge.
+                </div>
+                <div class="landing-footer-col landing-footer-bio">
+                    Liminalsynth is a personal creative alias.<br>
+                    Working across graphic, motion,<br>
+                    projection mapping.<br>
+                    <br>
+                    Based in Taiwan.
+                </div>
+                <div class="landing-footer-col landing-footer-contact">
+                    liminalsynths@gmail.com<br>
+                    @liminalsynths
+                </div>
+            </div>
+
+            <!-- mobile enter button -->
+            <button class="landing-enter-mobile clickable" type="button" aria-label="enter menu" onclick="goTo('nav')">
+                <img src="svg/nav-arrow.svg" alt="enter menu" class="landing-enter-icon">
+            </button>
         </div>
     </div>
 
     
-<div id="menu" class="page">
+<div id="nav" class="page">
     <div class="back-arrow clickable" onclick="goTo('landing')">
-         <img src="SVG/資產 18.svg" alt="back" class="back-icon">
+        <img src="svg/back-arrow.svg" alt="back" class="back-icon">
+    </div>
+    <div class="center-screen">
+        <div class="nav-svg-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 846.14 233.04">
+              <g>
+                <!-- commercial: bottom half (y≈135–233) -->
+                <g id="nav-commercial">
+                  <g fill="#dbdcdc">
+                    <path d="M55.2,232.91c-14.42,0-27.79-4.23-37.66-11.9C6.23,212.21,0,199.26,0,184.54s6.7-28.71,18.86-37.55c9.94-7.22,23.07-11.2,36.97-11.2,24.47,0,51.73,13.1,53.78,41.88l.09,1.22h4.51l-1.91,12.99c-1.89,12.83-9.46,23.97-21.33,31.37-9.99,6.23-22.7,9.66-35.76,9.66ZM54.94,169.46c-3.73,0-15.08,0-15.08,15.08,0,6.9,1.71,14.82,15.08,14.82,8.71,0,15.82-4.05,17.03-9.55h-2.35l-.24-11.1c-.15-6.82-7.56-9.25-14.45-9.25Z"/>
+                    <path d="M134.44,233.04c-32.69,0-57.34-20.85-57.34-48.5,0-14.88,7.01-28.06,19.75-37.1,10.43-7.4,24.36-11.65,38.22-11.65s26.94,4.03,36.99,11.35c12.23,8.9,18.96,22.18,18.96,37.4s-6.46,27.49-18.18,36.42c-10.23,7.79-23.87,12.08-38.4,12.08ZM134.57,169.34c-12.62,0-15.96,9.78-15.96,14.95,0,9.4,6.41,15.96,15.58,15.96s15.2-6.41,15.2-15.96c0-3.51-1.07-14.95-14.82-14.95Z"/>
+                    <path d="M280.21,231.02v-46.35c0-11.41-2.82-11.41-7.49-11.41-6.15,0-10.27,4.64-10.27,11.54v46.22h-41.38v-46.48c0-11.54-3.08-11.54-7.75-11.54-7.5,0-10.53,6.27-10.53,8.88v49.13h-41.63v-93.71h41.63v2.22c5.31-2.46,11.18-3.74,17.48-3.74,11.44,0,20.92,4.53,27.5,12.82,7.88-8.14,18.51-12.82,30.13-12.82,26.95,0,43.69,17.57,43.69,45.84v49.38h-41.38Z"/>
+                    <path d="M413.94,231.02v-46.35c0-11.41-2.82-11.41-7.49-11.41-6.15,0-10.27,4.64-10.27,11.54v46.22h-41.38v-46.48c0-11.54-3.08-11.54-7.75-11.54-7.5,0-10.53,6.27-10.53,8.88v49.13h-41.64v-93.71h41.64v2.22c5.31-2.46,11.18-3.74,17.48-3.74,11.44,0,20.92,4.53,27.5,12.82,7.88-8.14,18.51-12.82,30.13-12.82,26.95,0,43.69,17.57,43.69,45.84v49.38h-41.38Z"/>
+                    <path d="M480.14,232.91c-32.65,0-55.45-19.89-55.45-48.37s22.49-48.75,54.69-48.75c16.01,0,29.44,5.09,38.81,14.72,8.21,8.43,12.59,19.69,12.73,32.67h7.3l-3.33,13.96c-5.17,21.72-26.67,35.76-54.76,35.76ZM470.39,196.51c2.17,1.47,5.38,2.47,10.12,2.47,3.16,0,7.46-.72,10.82-2.47h-20.94Z"/>
+                    <path d="M505.2,231.14v-93.96h41.64v4.42c7.08-3.87,15.28-5.81,24.56-5.81,13.66,0,24.88,4.18,32.46,12.08,7.83,8.17,11.48,19.73,10.85,34.37l-.46,10.78-39.9.29v-11.42c0-6.16-1.1-7.69-1.22-7.85-.16-.19-1.5-.91-5.26-.91-15.48,0-21,12.31-21.02,14.95v43.06h-41.64Z"/>
+                    <path d="M631.05,232.91c-14.42,0-27.8-4.23-37.66-11.9-11.31-8.8-17.54-21.75-17.54-36.47s6.7-28.71,18.86-37.55c9.94-7.22,23.07-11.2,36.97-11.2,24.47,0,51.73,13.11,53.78,41.88l.09,1.22h4.51l-1.91,12.99c-1.89,12.83-9.46,23.97-21.33,31.37-9.99,6.23-22.69,9.66-35.76,9.66ZM630.8,169.46c-3.73,0-15.08,0-15.08,15.08,0,6.9,1.71,14.82,15.08,14.82,8.71,0,15.82-4.05,17.03-9.55h-2.35l-.24-11.1c-.15-6.82-7.56-9.25-14.45-9.25Z"/>
+                    <path d="M648.91,231.02v-36.83h21.61v-20.67h-21.61v-36.33h20.63c-1.64-3.15-2.55-6.8-2.55-10.78,0-13.01,9.82-22.46,23.35-22.46s23.34,9.45,23.34,22.46c0,7.27-3.03,13.44-8.04,17.48,4.2,4.25,6.53,10.37,6.53,17.91v32.39h21.36v36.83h-84.61Z"/>
+                    <path d="M735.71,232.28c-23.97,0-42.05-15.09-42.05-35.1,0-9.82,4.24-18,11.62-23.67h-3.68l-.34-36.33h55.17c30.59,0,46.1,15,46.1,44.58v12.55h12.51v36.83h-44.92v-2.7c-1.88-1.22-3.58-2.83-4.93-4.81-8.36,5.59-18.46,8.64-29.48,8.64ZM736.5,197.58c1.32.57,3.49,1.15,6.42,1.15,1.94,0,3.68-.28,5.24-.73-2.33-.67-4.65-1.11-6.75-1.11-1.86,0-3.63.31-4.9.69Z"/>
+                    <path d="M814.58,231.02c-15.8,0-27.26-11.47-27.26-27.26v-51.37l-13.02.13v-36.44h54.78v77.86h17.06v37.08h-31.56Z"/>
+                  </g>
+                  <g fill="#140305">
+                    <path d="M101.07,190.23c-3.03,20.6-24.65,31.34-45.88,31.34-23.38,0-43.86-13.02-43.86-37.03,0-25.78,23-37.41,44.49-37.41,20.1,0,40.95,9.98,42.47,31.34h-17.57c-.25-11.88-10.36-20.35-25.78-20.35-18.45,0-26.42,12.26-26.42,26.42,0,18.2,11.38,26.16,26.42,26.16s27.17-8.97,28.44-20.48h17.69Z"/>
+                    <path d="M179.69,184.54c0,23.51-21.49,37.16-45.25,37.16s-46-14.16-46-37.16c0-24.39,24.39-37.41,46.64-37.41s44.62,12.01,44.62,37.41ZM134.19,211.59c15.67,0,26.54-11.75,26.54-27.3,0-14.41-9.48-26.29-26.16-26.29-18.2,0-27.3,14.03-27.3,26.29,0,15.42,11.12,27.3,26.92,27.3Z"/>
+                    <path d="M191.45,148.65v9.35l-4.42,10.49h3.54c6.83-15.04,17.82-21.36,29.7-21.36,10.62,0,20.22,5.31,24.39,20.47h4.04c5.31-12.77,16.3-20.47,29.2-20.47,19.21,0,32.36,11.12,32.36,34.5v38.04h-18.71v-35.01c0-14.28-4.8-22.75-18.83-22.75-12.51,0-21.61,9.86-21.61,22.88v34.88h-18.71v-35.14c0-14.28-5.06-22.88-19.09-22.88s-21.87,11.63-21.87,20.22v37.79h-18.96v-71.03h18.96Z"/>
+                    <path d="M325.18,148.65v9.35l-4.42,10.49h3.54c6.83-15.04,17.82-21.36,29.7-21.36,10.62,0,20.22,5.31,24.39,20.47h4.04c5.31-12.77,16.3-20.47,29.2-20.47,19.21,0,32.36,11.12,32.36,34.5v38.04h-18.71v-35.01c0-14.28-4.8-22.75-18.83-22.75-12.51,0-21.61,9.86-21.61,22.88v34.88h-18.71v-35.14c0-14.28-5.06-22.88-19.08-22.88s-21.87,11.63-21.87,20.22v37.79h-18.96v-71.03h18.96Z"/>
+                    <path d="M454.73,185.17v3.03c.25,14.03,11.12,22.12,25.78,22.12,10.24,0,23.13-4.42,26.67-15.8h16.68c-4.42,18.58-24.01,27.05-43.73,27.05-24.14,0-44.11-12.89-44.11-37.03s20.73-37.41,43.35-37.41c24.52,0,40.82,14.41,40.19,38.04h-64.84ZM501.12,177.84c-.38-11.63-7.33-19.72-21.87-19.72-15.8,0-21.87,9.35-23.76,19.72h45.63Z"/>
+                    <path d="M603.37,181.76l-17.7.13c0-13.14-4.04-20.1-17.82-20.1-21.87,0-32.36,17.44-32.36,26.29v31.72h-18.96v-71.28h18.96v11.5l-2.78,7.71h4.3c8.09-14.91,19.59-20.6,34.38-20.6,17.57,0,33.11,8.09,31.98,34.63Z"/>
+                    <path d="M676.93,190.23c-3.03,20.6-24.65,31.34-45.88,31.34-23.38,0-43.86-13.02-43.86-37.03,0-25.78,23-37.41,44.49-37.41,20.1,0,40.95,9.98,42.47,31.34h-17.57c-.25-11.88-10.36-20.35-25.78-20.35-18.45,0-26.42,12.26-26.42,26.42,0,18.2,11.38,26.16,26.42,26.16s27.17-8.97,28.44-20.48h17.69Z"/>
+                    <path d="M660.25,205.52h21.61v-43.35h-21.61v-13.65h27.3c10.11,0,13.27,5.69,13.27,13.27v43.73h21.36v14.16h-61.93v-14.16ZM690.33,115.28c7.2,0,12.01,4.42,12.01,11.12s-4.8,11.25-12.01,11.25-12.01-4.55-12.01-11.25,4.8-11.12,12.01-11.12Z"/>
+                    <path d="M734.57,176.2c16.56,0,29.07,7.46,37.66,13.14.13-2.27,0-7.33,0-9.35,0-12.64-6.19-17.82-22.5-17.82h-36.91l-.13-13.65h43.73c24.01,0,34.76,9.99,34.76,33.24v23.89h12.51v14.16h-22.24v-.13l-2.4.13c-4.04,0-5.81-4.42-5.81-7.33,0-4.04,2.4-11.5,3.67-13.4l-3.79-2.02c-8.47,18.96-25.53,23.89-37.41,23.89-15.55,0-30.71-8.59-30.71-23.76s14.16-20.98,29.57-20.98ZM742.91,210.07c18.07,0,25.78-15.04,25.78-15.04,0,0-14.53-9.48-27.3-9.48-5.44,0-17.44,1.77-17.44,11.88,0,8.34,9.35,12.64,18.96,12.64Z"/>
+                    <path d="M798.66,140.94l-13.02.13v-13.65h32.1v77.86h17.06v14.41h-20.22c-9.61,0-15.92-6.45-15.92-15.92v-62.82Z"/>
+                  </g>
+                </g>
+                <!-- personal: top half (y≈0–117) -->
+                <g id="nav-personal">
+                  <g fill="#dbdcdc">
+                    <path d="M111.29,146.54V21.11h41.63v4.22c7.84-3.39,16.66-5.36,25.31-5.36,12.99,0,25.02,4.25,33.86,11.98,10.07,8.8,15.4,21.25,15.4,36.01s-5.43,27.42-15.7,36.28c-8.94,7.71-21.04,11.96-34.06,11.96-8.86,0-17.32-2.06-24.81-5.83v36.17h-41.63ZM171.04,53.64c-5.41,0-17.98,1.21-17.98,12.42,0,8.78,7.26,14.45,18.49,14.45,10.3,0,14.32-3.84,14.32-13.69,0-8.14-2.48-13.18-14.82-13.18Z"/>
+                    <path d="M249.66,116.84c-32.65,0-55.45-19.89-55.45-48.37s22.49-48.75,54.69-48.75c16.01,0,29.44,5.09,38.81,14.72,8.21,8.43,12.59,19.69,12.73,32.67h7.3l-3.33,13.96c-5.17,21.72-26.67,35.76-54.76,35.76ZM239.91,80.44c2.17,1.47,5.38,2.47,10.12,2.47,3.16,0,7.46-.72,10.82-2.47h-20.94Z"/>
+                    <path d="M274.72,115.07V21.11h41.64v4.42c7.08-3.87,15.28-5.81,24.56-5.81,13.66,0,24.88,4.18,32.46,12.08,7.83,8.17,11.48,19.73,10.85,34.37l-.46,10.78-39.9.29v-11.42c0-6.16-1.1-7.69-1.22-7.85-.16-.19-1.5-.91-5.26-.91-15.48,0-21,12.31-21.02,14.95v43.06h-41.64Z"/>
+                    <path d="M399.94,116.71c-17.83,0-31.69-3.83-41.18-11.37-8.02-6.38-12.62-15.35-12.62-24.61v-11.34h10.1c-4.06-5.69-4.92-11.88-4.92-16.09,0-11.05,5.66-20.35,15.94-26.19,8.63-4.9,20.52-7.39,35.33-7.39,31.94,0,51.78,14.27,51.78,37.25v11.34h-4.53c3.62,5.34,4.4,11.03,4.4,14.95,0,10.06-5.29,33.46-54.31,33.46Z"/>
+                    <path d="M477.54,116.96c-32.69,0-57.34-20.85-57.34-48.5,0-14.88,7.01-28.06,19.75-37.1,10.43-7.4,24.36-11.65,38.22-11.65s26.94,4.03,36.99,11.35c12.23,8.9,18.96,22.18,18.96,37.4s-6.46,27.49-18.18,36.42c-10.23,7.79-23.87,12.08-38.4,12.08ZM477.67,53.26c-12.63,0-15.96,9.78-15.96,14.95,0,9.4,6.41,15.96,15.58,15.96s15.2-6.41,15.2-15.96c0-3.51-1.07-14.95-14.82-14.95Z"/>
+                    <path d="M572.5,115.07v-47.23c0-10.78-2.87-10.78-7.62-10.78-13.05,0-18.98,11.88-18.99,14.95v43.06h-41.64V21.11h41.64v4.36c7.1-3.85,15.39-5.75,24.93-5.75,27.37,0,43.06,16.11,43.06,44.2v51.15h-41.38Z"/>
+                    <path d="M624.42,116.2c-23.97,0-42.05-15.09-42.05-35.1,0-9.82,4.24-18,11.62-23.67h-3.68l-.33-36.33h55.17c30.59,0,46.09,15,46.09,44.58v12.55h12.51v36.83h-44.92v-2.7c-1.89-1.22-3.58-2.83-4.93-4.81-8.36,5.59-18.46,8.64-29.49,8.64ZM625.21,81.5c1.32.57,3.49,1.15,6.42,1.15,1.94,0,3.68-.28,5.24-.73-2.33-.67-4.65-1.11-6.76-1.11-1.86,0-3.63.31-4.9.69Z"/>
+                    <path d="M703.29,114.94c-15.8,0-27.26-11.47-27.26-27.26v-51.37l-13.02.13V0h54.78v77.86h17.06v37.08h-31.56Z"/>
+                  </g>
+                  <g fill="#140305">
+                    <path d="M139.57,81.74h-3.92l5.94,12.76v40.7h-18.96V32.44h18.96v8.22l-5.69,8.47h4.3c6.07-9.73,21.99-17.82,38.04-17.82,19.84,0,37.92,12.26,37.92,36.65s-18.58,36.91-38.42,36.91c-18.2,0-31.85-10.49-38.17-23.13ZM141.72,66.06c0,13.52,10.36,25.78,29.83,25.78,17.69,0,25.66-10.11,25.66-25.03s-8.47-24.52-26.16-24.52-29.32,9.48-29.32,23.76Z"/>
+                    <path d="M224.25,69.1v3.03c.25,14.03,11.12,22.12,25.78,22.12,10.24,0,23.13-4.42,26.67-15.8h16.68c-4.42,18.58-24.01,27.05-43.73,27.05-24.14,0-44.11-12.89-44.11-37.03s20.73-37.41,43.35-37.41c24.52,0,40.82,14.41,40.19,38.04h-64.84ZM270.64,61.77c-.38-11.63-7.33-19.72-21.87-19.72-15.8,0-21.87,9.35-23.76,19.72h45.63Z"/>
+                    <path d="M372.89,65.69l-17.7.13c0-13.14-4.04-20.1-17.82-20.1-21.87,0-32.36,17.44-32.36,26.29v31.72h-18.96V32.44h18.96v11.5l-2.78,7.71h4.3c8.09-14.91,19.59-20.6,34.38-20.6,17.57,0,33.11,8.09,31.98,34.63Z"/>
+                    <path d="M442.91,83.25c0,14.28-15.54,22.12-42.97,22.12-34.38,0-42.47-15.55-42.47-24.65h18.2c.76,9.1,12.64,13.02,24.9,13.02,19.08,0,25.78-3.16,25.78-10.49,0-18.45-63.7,1.01-63.7-29.95,0-13.9,13.9-22.24,39.94-22.24,21.87,0,40.44,7.33,40.44,25.91h-17.19c-1.01-9.98-9.61-14.16-23.25-14.16s-21.87,2.78-21.87,11.25c0,18.2,62.18-.13,62.18,29.2Z"/>
+                    <path d="M522.79,68.47c0,23.51-21.49,37.16-45.25,37.16s-46.01-14.16-46.01-37.16c0-24.39,24.39-37.41,46.64-37.41s44.62,12.01,44.62,37.41ZM477.29,95.51c15.67,0,26.54-11.75,26.54-27.3,0-14.41-9.48-26.29-26.16-26.29-18.2,0-27.3,14.03-27.3,26.29,0,15.42,11.12,27.3,26.92,27.3Z"/>
+                    <path d="M602.55,63.92v39.81h-18.71v-35.89c0-8.47-1.39-22.12-18.96-22.12-19.84,0-30.33,17.44-30.33,26.29v31.72h-18.96V32.44h18.96v11.5l-2.78,7.71h4.3c8.09-14.91,19.59-20.6,34.76-20.6,16.56,0,31.72,6.95,31.72,32.86Z"/>
+                    <path d="M623.28,60.12c16.56,0,29.07,7.46,37.66,13.14.12-2.27,0-7.33,0-9.35,0-12.64-6.19-17.82-22.5-17.82h-36.91l-.13-13.65h43.73c24.01,0,34.76,9.99,34.76,33.24v23.89h12.51v14.16h-22.25v-.13l-2.4.13c-4.04,0-5.81-4.42-5.81-7.33,0-4.04,2.4-11.5,3.67-13.4l-3.79-2.02c-8.47,18.96-25.53,23.89-37.41,23.89-15.54,0-30.71-8.59-30.71-23.76s14.16-20.98,29.58-20.98ZM631.62,94c18.07,0,25.78-15.04,25.78-15.04,0,0-14.54-9.48-27.3-9.48-5.43,0-17.44,1.77-17.44,11.88,0,8.34,9.35,12.64,18.96,12.64Z"/>
+                    <path d="M687.36,24.86l-13.02.13v-13.65h32.1v77.86h17.06v14.41h-20.22c-9.61,0-15.92-6.45-15.92-15.92V24.86Z"/>
+                  </g>
+                </g>
+              </g>
+            </svg>
+            <div class="nav-hotspots" aria-label="nav hotspots">
+                <!-- top row = personal (y 0–117) -->
+                <button class="menu-hotspot nav-hotspot" data-target="menu" data-group="nav-personal" aria-label="personal"></button>
+                <!-- bottom row = commercial (y 135–233) -->
+                <button class="menu-hotspot nav-hotspot" data-target="applied" data-group="nav-commercial" aria-label="commercial"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="menu" class="page">
+    <div class="back-arrow clickable" onclick="goTo('nav')">
+         <img src="svg/back-arrow.svg" alt="back" class="back-icon">
     </div>
 
         <div class="center-screen">
         <div class="menu-swap">
-            <img id="menuSvg" src="SVG/資產 24.svg" alt="menu" draggable="false"/>
+            <img id="menuSvg" src="svg/graphic-motion.svg" alt="menu" draggable="false"/>
             <div class="menu-hotspots" aria-label="menu hotspots">
-                <button class="menu-hotspot" data-src="SVG/資產 23.svg" data-target="identity" aria-label="identity"></button>
-                <button class="menu-hotspot" data-src="SVG/資產 22.svg" data-target="poster" aria-label="graphic"></button>
-                <button class="menu-hotspot" data-src="SVG/資產 21.svg" data-target="project" aria-label="motion"></button>
-                <button class="menu-hotspot" data-src="SVG/資產 20.svg" data-target="applied" aria-label="applied"></button>
+                <button class="menu-hotspot" data-src="svg/graphic-motion-g.svg" data-target="poster" aria-label="graphic"></button>
+                <button class="menu-hotspot" data-src="svg/graphic-motion-m.svg" data-target="project" aria-label="motion"></button>
             </div>
         </div>
     </div>
 </div>
 
     <div id="identity" class="page">
-        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/資產 18.svg" alt="back" class="back-icon"></div>
+        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="svg/back-arrow.svg" alt="back" class="back-icon"></div>
         <div class="w-full h-full flex items-center justify-center">
             <div class="identity-layout">
                 <div class="about-box text-left text-2xl" style="width: min(560px, 46vw); line-height:1.45; background:transparent;">
@@ -939,61 +1624,61 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     </div>
 
     <div id="poster" class="page" style="background: white;">
-        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/資產 18.svg" alt="back" class="back-icon"></div>
+        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="svg/back-arrow.svg" alt="back" class="back-icon"></div>
 
         <!-- Desktop: collage -->
         <div class="poster-desktop">
-            <img src="image/works/mutant/cover.png" class="floating-img w-56" style="top:8%; left:8%;"  onclick="openPoster('mutant')"   alt="mutant">
-            <img src="image/works/melite/cover.jpg" class="floating-img w-56" style="top:22%; left:16%;" onclick="openPoster('melite')"   alt="melite">
-            <img src="image/works/pearl/cover.png" class="floating-img w-44" style="top:12%; left:34%;" onclick="openPoster('pearl')"   data-placeholder="pearl"   alt="pearl">
-            <img src="image/works/passion/cover.jpg" class="floating-img w-44" style="top:26%; left:38%;" onclick="openPoster('passion')" data-placeholder="passion" alt="passion">
-            <img src="image/works/meteorite/cover.png" class="floating-img w-60" style="top:8%; left:50%;"  onclick="openPoster('meteorite')" alt="meteorite">
+            <img src="images/graphic/mutant/cover.png" class="floating-img w-56" style="top:8%; left:8%;"  onclick="openPoster('mutant')"   alt="mutant">
+            <img src="images/graphic/melite/cover.jpg" class="floating-img w-56" style="top:22%; left:16%;" onclick="openPoster('melite')"   alt="melite">
+            <img src="images/graphic/pearl/cover.png" class="floating-img w-44" style="top:12%; left:34%;" onclick="openPoster('pearl')"   data-placeholder="pearl"   alt="pearl">
+            <img src="images/graphic/passion/cover.jpg" class="floating-img w-44" style="top:26%; left:38%;" onclick="openPoster('passion')" data-placeholder="passion" alt="passion">
+            <img src="images/graphic/meteorite/cover.png" class="floating-img w-60" style="top:8%; left:50%;"  onclick="openPoster('meteorite')" alt="meteorite">
 
-            <img src="image/works/multiboost/cover.jpg" class="floating-img w-72" style="top:14%; left:64%;" onclick="openPoster('multiboost')" alt="multiboost">
-            <img src="image/works/iridescent/cover.jpg" class="floating-img w-56" style="top:30%; left:74%;" onclick="openPoster('iridescent')" alt="iridescent">
-            <img src="image/works/born-this-way/cover.jpg" class="floating-img w-64" style="top:46%; left:78%;" onclick="openPoster('born_this_way')" alt="born this way">
+            <img src="images/graphic/multiboost/cover.jpg" class="floating-img w-72" style="top:14%; left:64%;" onclick="openPoster('multiboost')" alt="multiboost">
+            <img src="images/graphic/iridescent/cover.jpg" class="floating-img w-56" style="top:30%; left:74%;" onclick="openPoster('iridescent')" alt="iridescent">
+            <img src="images/graphic/born-this-way/cover.jpg" class="floating-img w-64" style="top:46%; left:78%;" onclick="openPoster('born_this_way')" alt="born this way">
 
-            <img src="image/works/strike/cover.jpg" class="floating-img w-64" style="bottom:18%; left:56%;" onclick="openPoster('strike')" alt="strike">
-            <img src="image/works/mirror/cover.jpg" class="floating-img w-56" style="bottom:14%; left:36%;" onclick="openPoster('mirror')" alt="mirror">
-            <img src="image/works/foray/cover.jpg" class="floating-img w-60" style="bottom:10%; left:18%;" onclick="openPoster('foray')" alt="foray">
-            <img src="image/works/the-crown/cover.png" class="floating-img w-44" style="bottom:30%; left:12%;" onclick="openPoster('the_crown')" data-placeholder="the_crown" alt="the crown">
-            <img src="image/works/yungboi-harris/cover.jpg" class="floating-img w-56" style="bottom:30%; left:70%;" onclick="openPoster('yungboi_harris')" alt="yungboi harris">
-            <img src="image/works/parallel paradise.png" class="floating-img w-56" style="top:5%; left:24%; width:27rem;" onclick="openPoster('parallel_paradise')" alt="parallel paradise">
-            <img src="image/works/fallen angel.png" class="floating-img w-56" style="bottom:32%; left:50%; width:21rem;" onclick="openPoster('fallen_angel')" alt="fallen angel">
-            <img src="image/works/stupid.png" class="floating-img w-56" style="bottom:6%; left:34%; width:21rem;" onclick="openPoster('stupid')" alt="stupid">
-            <img src="image/works/ezgif.com-animated-gif-maker.gif" class="floating-img w-44" style="top:54%; left:7%; width:16.5rem;" onclick="openPoster('super_power_100')" alt="super power 100">
-            <img src="image/works/wonderland.png" class="floating-img w-44" style="top:52%; left:61%;" onclick="openPoster('wonderland')" alt="wonderland">
+            <img src="images/graphic/strike/cover.jpg" class="floating-img w-64" style="bottom:18%; left:56%;" onclick="openPoster('strike')" alt="strike">
+            <img src="images/graphic/mirror/cover.jpg" class="floating-img w-56" style="bottom:14%; left:36%;" onclick="openPoster('mirror')" alt="mirror">
+            <img src="images/graphic/foray/cover.jpg" class="floating-img w-60" style="bottom:10%; left:18%;" onclick="openPoster('foray')" alt="foray">
+            <img src="images/graphic/the-crown/cover.png" class="floating-img w-44" style="bottom:30%; left:12%;" onclick="openPoster('the_crown')" data-placeholder="the_crown" alt="the crown">
+            <img src="images/graphic/yungboi-harris/cover.jpg" class="floating-img w-56" style="bottom:30%; left:70%;" onclick="openPoster('yungboi_harris')" alt="yungboi harris">
+            <img src="images/graphic/parallel paradise.png" class="floating-img w-56" style="top:5%; left:24%; width:27rem;" onclick="openPoster('parallel_paradise')" alt="parallel paradise">
+            <img src="images/graphic/fallen angel.png" class="floating-img w-56" style="bottom:32%; left:50%; width:21rem;" onclick="openPoster('fallen_angel')" alt="fallen angel">
+            <img src="images/graphic/stupid.png" class="floating-img w-56" style="bottom:6%; left:34%; width:21rem;" onclick="openPoster('stupid')" alt="stupid">
+            <img src="images/graphic/ezgif.com-animated-gif-maker.gif" class="floating-img w-44" style="top:54%; left:7%; width:16.5rem;" onclick="openPoster('super_power_100')" alt="super power 100">
+            <img src="images/graphic/wonderland.png" class="floating-img w-44" style="top:52%; left:61%;" onclick="openPoster('wonderland')" alt="wonderland">
         </div>
 
         <!-- Mobile: vertical card feed -->
         <div class="poster-mobile">
             <div class="poster-col">
-                <div class="poster-card clickable" onclick="openPoster('strike')"><img src="image/works/strike/cover.jpg" alt="strike"></div>
-                <div class="poster-card clickable" onclick="openPoster('born_this_way')"><img src="image/works/born-this-way/cover.jpg" alt="born this way"></div>
-                <div class="poster-card clickable" onclick="openPoster('multiboost')"><img src="image/works/multiboost/cover.jpg" alt="multiboost"></div>
-                <div class="poster-card clickable" onclick="openPoster('mutant')"><img src="image/works/mutant/cover.png" alt="mutant"></div>
-                <div class="poster-card clickable" onclick="openPoster('melite')"><img src="image/works/melite/cover.jpg" alt="melite"></div>
-                <div class="poster-card clickable" onclick="openPoster('pearl')"><img src="image/works/pearl/cover.png" alt="pearl"></div>
-                <div class="poster-card clickable" onclick="openPoster('wonderland')"><img src="image/works/wonderland.png" alt="wonderland"></div>
-                <div class="poster-card clickable" onclick="openPoster('super_power_100')"><img src="image/works/ezgif.com-animated-gif-maker.gif" alt="super power 100"></div>
-                <div class="poster-card clickable" onclick="openPoster('meteorite')"><img src="image/works/meteorite/cover.png" alt="meteorite"></div>
+                <div class="poster-card clickable" onclick="openPoster('strike')"><img src="images/graphic/strike/cover.jpg" alt="strike"></div>
+                <div class="poster-card clickable" onclick="openPoster('born_this_way')"><img src="images/graphic/born-this-way/cover.jpg" alt="born this way"></div>
+                <div class="poster-card clickable" onclick="openPoster('multiboost')"><img src="images/graphic/multiboost/cover.jpg" alt="multiboost"></div>
+                <div class="poster-card clickable" onclick="openPoster('mutant')"><img src="images/graphic/mutant/cover.png" alt="mutant"></div>
+                <div class="poster-card clickable" onclick="openPoster('melite')"><img src="images/graphic/melite/cover.jpg" alt="melite"></div>
+                <div class="poster-card clickable" onclick="openPoster('pearl')"><img src="images/graphic/pearl/cover.png" alt="pearl"></div>
+                <div class="poster-card clickable" onclick="openPoster('wonderland')"><img src="images/graphic/wonderland.png" alt="wonderland"></div>
+                <div class="poster-card clickable" onclick="openPoster('super_power_100')"><img src="images/graphic/ezgif.com-animated-gif-maker.gif" alt="super power 100"></div>
+                <div class="poster-card clickable" onclick="openPoster('meteorite')"><img src="images/graphic/meteorite/cover.png" alt="meteorite"></div>
             </div>
             <div class="poster-col">
-                <div class="poster-card clickable" onclick="openPoster('parallel_paradise')"><img src="image/works/parallel paradise.png" class="pp-black-bg" alt="parallel paradise"></div>
-                <div class="poster-card clickable" onclick="openPoster('the_crown')"><img src="image/works/the-crown/cover.png" alt="the crown"></div>
-                <div class="poster-card clickable" onclick="openPoster('foray')"><img src="image/works/foray/cover.jpg" alt="foray"></div>
-                <div class="poster-card clickable" onclick="openPoster('fallen_angel')"><img src="image/works/fallen angel.png" alt="fallen angel"></div>
-                <div class="poster-card clickable" onclick="openPoster('stupid')"><img src="image/works/stupid.png" alt="stupid"></div>
-                <div class="poster-card clickable" onclick="openPoster('mirror')"><img src="image/works/mirror/cover.jpg" alt="mirror"></div>
-                <div class="poster-card clickable" onclick="openPoster('iridescent')"><img src="image/works/iridescent/cover.jpg" alt="iridescent"></div>
-                <div class="poster-card clickable" onclick="openPoster('yungboi_harris')"><img src="image/works/yungboi-harris/cover.jpg" alt="yungboi harris"></div>
-                <div class="poster-card clickable" onclick="openPoster('passion')"><img src="image/works/passion/cover.jpg" alt="passion"></div>
+                <div class="poster-card clickable" onclick="openPoster('parallel_paradise')"><img src="images/graphic/parallel paradise.png" class="pp-black-bg" alt="parallel paradise"></div>
+                <div class="poster-card clickable" onclick="openPoster('the_crown')"><img src="images/graphic/the-crown/cover.png" alt="the crown"></div>
+                <div class="poster-card clickable" onclick="openPoster('foray')"><img src="images/graphic/foray/cover.jpg" alt="foray"></div>
+                <div class="poster-card clickable" onclick="openPoster('fallen_angel')"><img src="images/graphic/fallen angel.png" alt="fallen angel"></div>
+                <div class="poster-card clickable" onclick="openPoster('stupid')"><img src="images/graphic/stupid.png" alt="stupid"></div>
+                <div class="poster-card clickable" onclick="openPoster('mirror')"><img src="images/graphic/mirror/cover.jpg" alt="mirror"></div>
+                <div class="poster-card clickable" onclick="openPoster('iridescent')"><img src="images/graphic/iridescent/cover.jpg" alt="iridescent"></div>
+                <div class="poster-card clickable" onclick="openPoster('yungboi_harris')"><img src="images/graphic/yungboi-harris/cover.jpg" alt="yungboi harris"></div>
+                <div class="poster-card clickable" onclick="openPoster('passion')"><img src="images/graphic/passion/cover.jpg" alt="passion"></div>
             </div>
         </div>
     </div>
 
     <div id="detail" class="page">
-        <div class="back-arrow clickable" onclick="goTo('poster')"><img src="SVG/資產 18.svg" alt="back" class="back-icon"></div>
+        <div class="back-arrow clickable" onclick="goTo('poster')"><img src="svg/back-arrow.svg" alt="back" class="back-icon"></div>
         <div class="detail-mobile-info" id="detailMobileInfo">
             <div class="small-title work-title" id="detailTitleMobile" data-title="—">—</div>
             <div class="meta-text" id="detailMetaMobile">—</div>
@@ -1028,7 +1713,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     </div>
     <!-- typographic -->
     <div id="typographic" class="page">
-        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/資產 18.svg" alt="back" class="back-icon"></div>
+        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="svg/back-arrow.svg" alt="back" class="back-icon"></div>
         <div class="w-full h-full flex items-center justify-center">
             <div class="meta-text" style="font-size:18px;">typographic (coming soon)</div>
         </div>
@@ -1036,27 +1721,230 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
 
     <!-- illustration / project：先放同版式 placeholder，之後換你的內容 -->
     <div id="illustration" class="page">
-        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/資產 18.svg" alt="back" class="back-icon"></div>
+        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="svg/back-arrow.svg" alt="back" class="back-icon"></div>
         <div class="w-full h-full flex items-center justify-center">
             <div class="meta-text" style="font-size:18px;">illustration (coming soon)</div>
         </div>
     </div>
 
-    <div id="project" class="page">
-        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/資產 18.svg" alt="back" class="back-icon"></div>
-        <div class="w-full h-full flex items-center justify-center">
-            <div class="meta-text" style="font-size:18px;">motion (coming soon)</div>
+    <div id="project" class="page" style="background:#000;">
+        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="svg/back-arrow.svg" alt="back" class="back-icon" style="filter:invert(1);"></div>
+        <div id="project-banner-anka"   class="project-banner" style="background-image:url('images/motion/banners/anka.jpg');"></div>
+        <div id="project-banner-sirius" class="project-banner" style="background-image:url('images/motion/banners/sirius.png');"></div>
+        <div id="project-banner-thread" class="project-banner" style="background-image:url('images/motion/banners/thread.png');"></div>
+        <div id="project-logos" style="position:absolute; inset:0; z-index:2;">
+            <div class="project-logo-wrap" style="position:absolute; top:50%; left:calc(50% + 45px); transform:translate(-50%,-50%);" data-banner="anka">
+                <img src="images/motion/logos/anka.png" alt="anka" class="clickable project-logo"
+                     style="height:144px; object-fit:contain; display:block;"
+                     onclick="goTo('motion-anka')">
+            </div>
+            <div class="project-logo-wrap" style="position:absolute; top:50%; right:calc(50% + 128px); transform:translateY(-50%);" data-banner="sirius">
+                <img src="images/motion/logos/sirius.png" alt="sirius" class="clickable project-logo"
+                     style="height:45px; object-fit:contain; display:block;"
+                     onclick="goTo('motion-sirius')">
+            </div>
+            <div class="project-logo-wrap" style="position:absolute; top:50%; left:calc(50% + 218px); transform:translateY(-50%);" data-banner="thread">
+                <img src="images/motion/logos/thread.png" alt="thread" class="clickable project-logo"
+                     style="height:144px; object-fit:contain; display:block;"
+                     onclick="goTo('motion-thread')">
+            </div>
         </div>
     </div>
 
-    <div id="applied" class="page">
-        <div class="back-arrow clickable" onclick="goTo('menu')"><img src="SVG/資產 18.svg" alt="back" class="back-icon"></div>
-        <div class="w-full h-full flex items-center justify-center">
-            <div class="meta-text" style="font-size:18px;">applied (coming soon)</div>
+    <!-- motion: sirius -->
+    <div id="motion-sirius" class="page md-page">
+        <div class="back-arrow clickable" onclick="goTo('project')"><img src="svg/back-arrow.svg" alt="back" class="back-icon" style="filter:invert(1);"></div>
+        <div class="md-overlay-info" id="siriusOverlay">
+            <div class="md-title-area">
+                <div class="small-title work-title md-title" data-title="sirius">sirius</div>
+            </div>
+            <div class="md-meta-area">
+                <div class="meta-text md-meta-year">2023</div>
+                <div class="meta-text md-meta-type">vr visual short film</div>
+                <div class="meta-text md-desc">a 2 minute 360° art short that abstractly explores the birth, decay, and rebirth of the sirius star. created using 3d modeling and visual effects.</div>
+            </div>
         </div>
+        <div class="md-video-section">
+            <iframe class="md-video-full" id="vimeo-sirius" src="https://player.vimeo.com/video/1100868271?title=0&byline=0&portrait=0" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="md-photos-section">
+            <img src="images/motion/photos/sirius/01.jpeg" alt="sirius 1">
+            <img src="images/motion/photos/sirius/00.jpeg" alt="sirius 2">
+        </div>
+        <div class="md-footer-info">
+            <div class="md-footer-name">
+                <div class="small-title work-title md-title" data-title="sirius">sirius</div>
+            </div>
+            <div class="md-footer-meta">
+                <div class="meta-text md-meta-year" style="color:#fff;">2023</div>
+                <div class="meta-text md-meta-type" style="color:#fff;">vr visual short film</div>
+            </div>
+            <div class="md-footer-desc">
+                <div class="meta-text md-desc">a 2 minute 360° art short that abstractly explores the birth, decay, and rebirth of the sirius star. created using 3d modeling and visual effects.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- motion: thread -->
+    <div id="motion-thread" class="page md-page">
+        <div class="back-arrow clickable" onclick="goTo('project')"><img src="svg/back-arrow.svg" alt="back" class="back-icon" style="filter:invert(1);"></div>
+        <div class="md-overlay-info" id="threadOverlay">
+            <div class="md-title-area">
+                <div class="small-title work-title md-title" data-title="thread">thread</div>
+            </div>
+            <div class="md-meta-area">
+                <div class="meta-text md-meta-year">2024</div>
+                <div class="meta-text md-meta-type">projection mapping</div>
+                <div class="meta-text md-desc">what would emotions look like if turned into light? a 5 minute light sculpture installation projected onto an orchid.</div>
+            </div>
+        </div>
+        <div class="md-video-section">
+            <iframe class="md-video-full" id="vimeo-thread" src="https://player.vimeo.com/video/1205491282?title=0&byline=0&portrait=0" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="md-photos-section">
+            <img src="images/motion/photos/thread/1.jpeg" alt="thread 1">
+            <img src="images/motion/photos/thread/2.jpeg" alt="thread 2">
+            <div class="md-photo-pair">
+                <img src="images/motion/photos/thread/3-1.jpeg" alt="thread 3-1">
+                <img src="images/motion/photos/thread/3-2.jpeg" alt="thread 3-2">
+            </div>
+            <div class="md-photo-pair">
+                <img src="images/motion/photos/thread/4-1.jpeg" alt="thread 4-1">
+                <img src="images/motion/photos/thread/4-2.jpeg" alt="thread 4-2">
+            </div>
+            <img src="images/motion/photos/thread/5.jpeg" alt="thread 5">
+        </div>
+        <div class="md-footer-info">
+            <div class="md-footer-name">
+                <div class="small-title work-title md-title" data-title="thread">thread</div>
+            </div>
+            <div class="md-footer-meta">
+                <div class="meta-text md-meta-year" style="color:#fff;">2024</div>
+                <div class="meta-text md-meta-type" style="color:#fff;">projection mapping</div>
+            </div>
+            <div class="md-footer-desc">
+                <div class="meta-text md-desc">what would emotions look like if turned into light? a 5 minute light sculpture installation projected onto an orchid.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- motion: anka -->
+    <div id="motion-anka" class="page md-page">
+        <div class="back-arrow clickable" onclick="goTo('project')"><img src="svg/back-arrow.svg" alt="back" class="back-icon" style="filter:invert(1);"></div>
+        <div class="md-overlay-info" id="ankaOverlay">
+            <div class="md-title-area">
+                <div class="small-title work-title md-title" data-title="anka">anka</div>
+            </div>
+            <div class="md-meta-area">
+                <div class="meta-text md-meta-year">2025</div>
+                <div class="meta-text md-meta-type">immersive experience</div>
+                <div class="meta-text md-desc">a flower named anka is said to guide souls out of suffering—but its forbidden truth can only be known through direct experience. this immersive installation combines projection mapping with a vr visual short film, running for approximately 5 minutes. all visuals and audio were created using ai tools, then composited, designed, and mixed with creative software.</div>
+            </div>
+        </div>
+        <div class="md-video-section">
+            <iframe class="md-video-full" id="vimeo-anka" src="https://player.vimeo.com/video/1205492377?title=0&byline=0&portrait=0" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="md-photos-section">
+            <img src="images/motion/photos/anka/1.jpeg"  alt="anka 1">
+            <img src="images/motion/photos/anka/2.jpg"   alt="anka 2">
+            <img src="images/motion/photos/anka/3.jpeg"  alt="anka 3">
+            <img src="images/motion/photos/anka/4.jpeg"  alt="anka 4">
+            <img src="images/motion/photos/anka/5.jpeg"  alt="anka 5">
+            <img src="images/motion/photos/anka/6.jpeg"  alt="anka 6">
+            <img src="images/motion/photos/anka/7.jpeg"  alt="anka 7">
+            <img src="images/motion/photos/anka/8.jpeg"  alt="anka 8">
+            <div class="md-photo-pair">
+                <img src="images/motion/photos/anka/9-1.jpeg" alt="anka 9-1">
+                <img src="images/motion/photos/anka/9-2.jpeg" alt="anka 9-2">
+            </div>
+            <img src="images/motion/photos/anka/10.jpeg" alt="anka 10">
+            <img src="images/motion/photos/anka/13.jpeg" alt="anka 13">
+        </div>
+        <div class="md-footer-info">
+            <div class="md-footer-name">
+                <div class="small-title work-title md-title" data-title="anka">anka</div>
+            </div>
+            <div class="md-footer-meta">
+                <div class="meta-text md-meta-year" style="color:#fff;">2025</div>
+                <div class="meta-text md-meta-type" style="color:#fff;">immersive experience</div>
+            </div>
+            <div class="md-footer-desc">
+                <div class="meta-text md-desc">a flower named anka is said to guide souls out of suffering—but its forbidden truth can only be known through direct experience. this immersive installation combines projection mapping with a vr visual short film, running for approximately 5 minutes. all visuals and audio were created using ai tools, then composited, designed, and mixed with creative software.</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="applied" class="page" style="background:#f2f2f2; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch;">
+        <div class="applied-topbar">
+            <div class="applied-tabs">
+                <span class="applied-tab-item active" data-tab="assets"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 59.93 13.65"><g><g><path class="cls-2" d="M5.19,13.58c-2.96,0-5.19-1.93-5.19-4.49,0-1.02.35-1.92.98-2.62-.12-.26-.19-.56-.2-.87v-1.37c-.02-.56.2-1.11.6-1.51s.94-.62,1.5-.62h4.38c3.61,0,5.59,1.93,5.59,5.44v.46c.74.33,1.25,1.07,1.25,1.93v1.42c0,1.17-.95,2.11-2.11,2.11h-2.47c-.58,0-1.12-.19-1.55-.51-.83.4-1.78.62-2.79.62Z"/><path class="cls-2" d="M17,13.63c-5.03,0-6.37-2.88-6.37-4.58,0-.61.26-1.17.68-1.55-.11-.35-.16-.75-.16-1.2,0-2.1,1.61-4.34,6.11-4.34s6.16,2.54,6.16,4.71c0,.4-.11.78-.31,1.1.19.43.3.94.3,1.53,0,1.02-.46,4.33-6.42,4.33Z"/><path class="cls-2" d="M26.7,13.63c-5.03,0-6.37-2.88-6.37-4.58,0-.61.26-1.17.68-1.55-.11-.35-.16-.75-.16-1.2,0-2.1,1.61-4.34,6.11-4.34s6.16,2.54,6.16,4.71c0,.4-.11.78-.31,1.1.19.43.3.94.3,1.53,0,1.02-.46,4.33-6.42,4.33Z"/><path class="cls-2" d="M36.6,13.65c-3.85,0-6.53-2.39-6.53-5.82s2.65-5.86,6.46-5.86c1.85,0,3.48.63,4.59,1.77.97,1,1.5,2.31,1.55,3.81.38.5.52,1.15.38,1.77-.63,2.63-3.15,4.33-6.44,4.33Z"/><path class="cls-2" d="M46.2,13.46c-3.22,0-5.38-2.08-5.38-5.18,0-.3.02-.58.06-.86-.63-.36-1.06-1.04-1.07-1.82v-1.37c-.02-.56.2-1.11.6-1.51.38-.38.89-.6,1.42-.62.16-.79.77-1.43,1.58-1.63l1.75-.42c.16-.04.33-.06.49-.06.47,0,.94.16,1.31.46.5.4.8,1,.8,1.65h.35c1.17,0,2.11.95,2.11,2.11v1.37c0,1.17-.95,2.11-2.11,2.11h-1.47v.12h1.46c1.17,0,2.11.95,2.11,2.11v1.42c0,1.17-.95,2.11-2.11,2.11h-1.89Z"/><path class="cls-2" d="M53.5,13.63c-5.03,0-6.37-2.88-6.37-4.58,0-.61.26-1.17.68-1.55-.11-.35-.16-.75-.16-1.2,0-2.1,1.61-4.34,6.11-4.34s6.16,2.54,6.16,4.71c0,.4-.11.78-.31,1.1.19.43.3.94.3,1.53,0,1.02-.46,4.33-6.42,4.33Z"/></g><g><path class="cls-1" d="M5.07,6.99c1.66,0,2.91.75,3.77,1.32.01-.23,0-.74,0-.94,0-1.27-.62-1.79-2.25-1.79h-3.7v-1.37s4.37,0,4.37,0c2.41,0,3.48,1,3.48,3.33v2.39h1.25v1.42h-2.23s-.24,0-.24,0c-.41,0-.58-.44-.58-.73,0-.41.24-1.15.37-1.34l-.38-.2c-.85,1.9-2.56,2.39-3.75,2.39-1.56,0-3.08-.86-3.08-2.38s1.42-2.1,2.96-2.1ZM5.91,10.38c1.81,0,2.58-1.51,2.58-1.51,0,0-1.46-.95-2.74-.95-.54,0-1.75.18-1.75,1.19,0,.83.94,1.27,1.9,1.27Z"/><path class="cls-1" d="M21.3,9.31c0,1.43-1.56,2.22-4.31,2.22-3.44,0-4.25-1.56-4.25-2.47h1.82c.08.91,1.27,1.3,2.5,1.3,1.91,0,2.58-.32,2.58-1.05,0-1.85-6.38.1-6.38-3,0-1.39,1.39-2.23,4-2.23,2.19,0,4.05.73,4.05,2.6h-1.72c-.1-1-.96-1.42-2.33-1.42s-2.19.28-2.19,1.13c0,1.82,6.23-.01,6.23,2.93Z"/><path class="cls-1" d="M31.01,9.31c0,1.43-1.56,2.22-4.31,2.22-3.44,0-4.25-1.56-4.25-2.47h1.82c.08.91,1.27,1.3,2.5,1.3,1.91,0,2.58-.32,2.58-1.05,0-1.85-6.38.1-6.38-3,0-1.39,1.39-2.23,4-2.23,2.19,0,4.05.73,4.05,2.6h-1.72c-.1-1-.96-1.42-2.33-1.42s-2.19.28-2.19,1.13c0,1.82,6.23-.01,6.23,2.93Z"/><path class="cls-1" d="M34.05,7.89v.3c.03,1.41,1.11,2.22,2.58,2.22,1.03,0,2.32-.44,2.67-1.58h1.67c-.44,1.86-2.41,2.71-4.38,2.71-2.42,0-4.42-1.29-4.42-3.71s2.08-3.75,4.34-3.75c2.46,0,4.09,1.44,4.03,3.81h-6.5ZM38.7,7.15c-.04-1.17-.73-1.98-2.19-1.98-1.58,0-2.19.94-2.38,1.98h4.57Z"/><path class="cls-1" d="M45.63,4.21h2.47v1.37h-1.95c-1.27,0-1.63.8-1.63,2.22,0,1.28.37,2.13,1.77,2.13h1.8v1.42h-1.89c-2.1,0-3.27-1.17-3.27-3.06,0-1.42.59-2.55,2.05-2.8v-.42l-1.35.52h-1.71v-1.37s1.98,0,1.98,0v-1.68l1.75-.42v2.1Z"/><path class="cls-1" d="M57.81,9.31c0,1.43-1.56,2.22-4.31,2.22-3.44,0-4.25-1.56-4.25-2.47h1.82c.08.91,1.27,1.3,2.5,1.3,1.91,0,2.58-.32,2.58-1.05,0-1.85-6.38.1-6.38-3,0-1.39,1.39-2.23,4-2.23,2.19,0,4.05.73,4.05,2.6h-1.72c-.1-1-.96-1.42-2.33-1.42s-2.19.28-2.19,1.13c0,1.82,6.23-.01,6.23,2.93Z"/></g></g></svg></span>
+                <span class="applied-tab-item" data-tab="banner"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 65.68 13.67"><g><g><path class="cls-2" d="M7.66,13.58c-.83,0-1.67-.17-2.46-.46-.34.23-.75.36-1.19.36h-1.9c-1.17,0-2.11-.95-2.11-2.11V2.11C0,.95.95,0,2.11,0h1.9c1.17,0,2.11.95,2.11,2.11v.04c.47-.11.97-.16,1.47-.16,3.54,0,6.01,2.32,6.01,5.64s-2.56,5.95-5.95,5.95ZM6.97,7.4c-.56,0-.84.12-.84.36,0,.38.57.48.86.48.26,0,.39-.05.41-.07.02-.02.08-.16.08-.44,0-.14-.01-.23-.03-.28-.07-.02-.22-.06-.48-.06Z"/><path class="cls-2" d="M15.71,13.61c-2.96,0-5.19-1.93-5.19-4.49,0-1.02.35-1.92.98-2.62-.12-.26-.19-.56-.2-.87v-1.37c-.02-.56.2-1.11.6-1.51s.94-.62,1.5-.62h4.38c3.61,0,5.59,1.93,5.59,5.44v.46c.74.33,1.25,1.07,1.25,1.93v1.42c0,1.17-.95,2.11-2.11,2.11h-2.47c-.58,0-1.12-.19-1.55-.51-.83.4-1.78.62-2.79.62Z"/><path class="cls-2" d="M30.52,13.49c-1.17,0-2.11-.95-2.11-2.11,0,0,0-3.65,0-3.68-.47.1-.67.49-.72.61v3.07c0,1.17-.95,2.11-2.11,2.11h-1.9c-1.17,0-2.11-.95-2.11-2.11v-7.14c0-1.17.95-2.11,2.11-2.11h1.9c.42,0,.81.12,1.14.33.74-.31,1.58-.47,2.5-.47,3.26,0,5.29,2.07,5.29,5.4v3.99c0,1.17-.95,2.11-2.11,2.11h-1.87Z"/><path class="cls-2" d="M41.12,13.49c-1.17,0-2.11-.95-2.11-2.11,0,0,0-3.65,0-3.68-.47.1-.67.49-.72.61v3.07c0,1.17-.95,2.11-2.11,2.11h-1.9c-1.17,0-2.11-.95-2.11-2.11v-7.14c0-1.17.95-2.11,2.11-2.11h1.9c.42,0,.81.12,1.14.33.74-.31,1.58-.47,2.5-.47,3.26,0,5.29,2.07,5.29,5.4v3.99c0,1.17-.95,2.11-2.11,2.11h-1.87Z"/><path class="cls-2" d="M48.92,13.67c-3.85,0-6.53-2.39-6.53-5.82s2.65-5.86,6.46-5.86c1.85,0,3.48.63,4.59,1.77.97,1,1.5,2.31,1.55,3.81.38.5.52,1.15.38,1.77-.63,2.63-3.15,4.33-6.44,4.33Z"/><path class="cls-2" d="M54.86,13.49c-1.17,0-2.11-.95-2.11-2.11v-7.14c0-1.17.95-2.11,2.11-2.11h1.9c.42,0,.81.12,1.14.33.74-.31,1.56-.47,2.46-.47,1.64,0,3.01.52,3.96,1.51.98,1.02,1.43,2.42,1.36,4.16-.05,1.12-.97,2.01-2.09,2.02,0,0-1.78.01-1.79.01-.56,0-1.09-.22-1.49-.61-.37-.37-.59-.85-.62-1.37-.55.11-.76.49-.81.6v3.07c0,1.17-.95,2.11-2.11,2.11h-1.9Z"/></g><g><path class="cls-1" d="M11.5,7.63c0,2.46-1.85,3.84-3.84,3.84-1.74,0-3.37-1.05-3.79-1.9h-.43l.57.95v.85h-1.9V2.11h1.9v3.03l-.58,1.17h.39c.82-1.39,2.14-2.2,3.77-2.2,2.05,0,3.9,1.09,3.9,3.53ZM9.6,7.73c0-1.41-.72-2.44-2.62-2.44-2,0-2.95,1.17-2.95,2.47,0,1.47,1.23,2.6,2.98,2.6,1.63,0,2.6-.99,2.6-2.62Z"/><path class="cls-1" d="M15.59,7.01c1.66,0,2.91.75,3.77,1.32.01-.23,0-.74,0-.94,0-1.27-.62-1.79-2.25-1.79h-3.7v-1.37s4.37,0,4.37,0c2.41,0,3.48,1,3.48,3.33v2.39h1.25v1.42h-2.23s-.24,0-.24,0c-.41,0-.58-.44-.58-.73,0-.41.24-1.15.37-1.34l-.38-.2c-.85,1.9-2.56,2.39-3.75,2.39-1.56,0-3.08-.86-3.08-2.38s1.42-2.1,2.96-2.1ZM16.43,10.41c1.81,0,2.58-1.51,2.58-1.51,0,0-1.46-.95-2.74-.95-.54,0-1.75.18-1.75,1.19,0,.83.94,1.27,1.9,1.27Z"/><path class="cls-1" d="M32.39,7.39v3.99h-1.87v-3.6c0-.85-.14-2.22-1.9-2.22-1.99,0-3.04,1.75-3.04,2.63v3.18h-1.9v-7.14h1.9v1.15l-.28.77h.43c.81-1.49,1.96-2.06,3.48-2.06,1.66,0,3.18.7,3.18,3.29Z"/><path class="cls-1" d="M43,7.39v3.99h-1.87v-3.6c0-.85-.14-2.22-1.9-2.22-1.99,0-3.04,1.75-3.04,2.63v3.18h-1.9v-7.14h1.9v1.15l-.28.77h.43c.81-1.49,1.96-2.06,3.48-2.06,1.66,0,3.18.7,3.18,3.29Z"/><path class="cls-1" d="M46.37,7.91v.3c.03,1.41,1.11,2.22,2.58,2.22,1.03,0,2.32-.44,2.67-1.58h1.67c-.44,1.86-2.41,2.71-4.38,2.71-2.42,0-4.42-1.29-4.42-3.71s2.08-3.75,4.34-3.75c2.46,0,4.09,1.44,4.03,3.81h-6.5ZM51.02,7.18c-.04-1.17-.73-1.98-2.19-1.98-1.58,0-2.19.94-2.38,1.98h4.57Z"/><path class="cls-1" d="M63.56,7.57h-1.77c0-1.3-.41-2-1.79-2-2.19,0-3.24,1.75-3.24,2.63v3.18h-1.9v-7.14h1.9v1.15l-.28.77h.43c.81-1.49,1.96-2.06,3.45-2.06,1.76,0,3.32.81,3.2,3.47Z"/></g></g></svg></span>
+                <span class="applied-tab-item" data-tab="video"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 49.71 14.89"><g><g><path class="cls-2" d="M4.73,14.68c-.88,0-1.68-.55-1.98-1.38L.13,6.17c-.24-.65-.14-1.37.25-1.94.39-.57,1.04-.9,1.73-.9h2.01c.95,0,1.78.63,2.04,1.55l.16.58.17-.59c.26-.91,1.09-1.54,2.03-1.54h1.98c.7,0,1.35.34,1.74.92.39.57.48,1.3.23,1.95l-2.74,7.13c-.31.82-1.1,1.35-1.97,1.35h-3.03Z"/><path class="cls-2" d="M10.78,14.68c-1.17,0-2.11-.95-2.11-2.11v-1.42c0-1.17.95-2.11,2.11-2.11h.05v-.12h-.05c-1.17,0-2.11-.95-2.11-2.11v-1.37c0-1.07.79-1.95,1.81-2.09,0-.04,0-.08,0-.13,0-1.84,1.42-3.23,3.31-3.23s3.31,1.39,3.31,3.23c0,.69-.2,1.31-.54,1.82.25.49.39,1.07.39,1.72v2.27h.03c1.17,0,2.11.95,2.11,2.11v1.42c0,1.17-.95,2.11-2.11,2.11h-6.21Z"/><path class="cls-2" d="M21.33,14.79c-3.37,0-5.91-2.52-5.91-5.87s2.51-5.72,5.96-5.72c.52,0,1.03.05,1.51.16v-.03c0-1.17.95-2.11,2.11-2.11h1.9c1.17,0,2.11.95,2.11,2.11v9.25c0,1.17-.95,2.11-2.11,2.11h-1.9c-.44,0-.85-.13-1.19-.36-.79.3-1.65.47-2.49.47ZM21.6,9.4s.14.04.39.04c.31,0,.9-.1.9-.48,0-.24-.27-.36-.81-.36-.32,0-.48.06-.52.08,0,0,0,0,0,0,.02,0-.02.12-.02.35,0,.24.04.35.05.38,0,0,0,0,0,0Z"/><path class="cls-2" d="M32.91,14.87c-3.85,0-6.53-2.39-6.53-5.82s2.65-5.86,6.46-5.86c1.85,0,3.48.63,4.59,1.77.97,1,1.5,2.31,1.55,3.81.38.5.52,1.15.38,1.77-.63,2.63-3.15,4.33-6.44,4.33Z"/><path class="cls-2" d="M43.06,14.89c-3.83,0-6.72-2.51-6.72-5.83,0-3.81,3.5-5.86,6.78-5.86s6.58,2.05,6.58,5.86c0,3.33-2.86,5.83-6.65,5.83ZM43.07,8.5c-.54,0-.62.33-.62.52,0,.28.1.62.59.62.14,0,.55,0,.55-.62,0-.52-.26-.52-.51-.52Z"/></g><g><path class="cls-1" d="M10.5,5.44l-2.74,7.13h-3.03l-2.62-7.13h2.01l1.82,6.6h.71l1.86-6.6h1.98Z"/><path class="cls-1" d="M10.78,11.15h2.17v-4.34h-2.17v-1.37h2.74c1.01,0,1.33.57,1.33,1.33v4.38h2.14v1.42h-6.21v-1.42ZM13.79,2.11c.72,0,1.2.44,1.2,1.11s-.48,1.13-1.2,1.13-1.2-.46-1.2-1.13.48-1.11,1.2-1.11Z"/><path class="cls-1" d="M25.21,7.51h.39l-.6-1.17v-3.01h1.9v9.25h-1.9v-.85l.58-.95h-.43c-.42.85-2.06,1.9-3.83,1.9-1.96,0-3.8-1.3-3.8-3.76s1.85-3.61,3.85-3.61c1.67,0,2.99.81,3.83,2.2ZM25,8.96c0-1.3-.95-2.47-2.93-2.47s-2.65,1.11-2.65,2.53c0,1.62.95,2.53,2.56,2.53,1.79,0,3.01-1.13,3.01-2.6Z"/><path class="cls-1" d="M30.37,9.12v.3c.03,1.41,1.11,2.22,2.58,2.22,1.03,0,2.32-.44,2.67-1.58h1.67c-.44,1.86-2.41,2.71-4.38,2.71-2.42,0-4.42-1.29-4.42-3.71s2.08-3.75,4.34-3.75c2.46,0,4.09,1.44,4.03,3.81h-6.5ZM35.02,8.38c-.04-1.17-.73-1.98-2.19-1.98-1.58,0-2.19.94-2.38,1.98h4.57Z"/><path class="cls-1" d="M47.6,9.05c0,2.36-2.15,3.72-4.53,3.72s-4.61-1.42-4.61-3.72c0-2.44,2.44-3.75,4.67-3.75s4.47,1.2,4.47,3.75ZM43.04,11.76c1.57,0,2.66-1.18,2.66-2.74,0-1.44-.95-2.63-2.62-2.63-1.82,0-2.74,1.41-2.74,2.63,0,1.54,1.11,2.74,2.7,2.74Z"/></g></g></svg></span>
+            </div>
+            <div class="applied-logo-card">
+                <img src="svg/meitu-works-logo.svg" alt="meitu works">
+            </div>
+            <div class="applied-topbar-meta">
+                <div class="applied-topbar-year">2024-2026<br>app assets</div>
+                <div class="applied-topbar-desc">graphic materials created during internship and full-time stages at meitu, including collage frames and stickers.</div>
+            </div>
+        </div>
+        <div class="back-arrow clickable" onclick="goTo('nav')"><img src="svg/back-arrow.svg" alt="back" class="back-icon"></div>
+        <div class="applied-clip-wrap">
+        <div class="applied-layout">
+            <div class="applied-inner">
+                <!-- hero -->
+                <img src="images/motion/hero.png" class="applied-hero applied-px-img" style="left:0%;top:0%;width:100%;height:20.8912%;display:none;">
+                <!-- works — positions derived from PDF (1440×4084px) -->
+                <img src="images/meitu-works/123.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:76.4583%;top:20.8855%;width:20.9722%;height:13.7360%;">
+                <img src="images/meitu-works/odaf81eEDkjayjR.jpeg" class="applied-px-img" data-category="assets" loading="lazy" style="left:43.8889%;top:20.9345%;width:15.2778%;height:8.1045%;">
+                <img src="images/meitu-works/gWRUwObn1bGYzqm.jpeg" class="applied-px-img" data-category="assets" loading="lazy" style="left:60.2778%;top:20.9345%;width:15.2778%;height:8.1045%;">
+                <img src="images/meitu-works/qqaIjVPQkopPznp.jpeg" class="applied-px-img" data-category="assets" loading="lazy" style="left:27.5694%;top:20.9590%;width:15.2778%;height:8.0800%;">
+                <img src="images/meitu-works/6886ea20e27474363.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:2.7083%;top:20.9590%;width:11.6667%;height:4.1134%;">
+                <img src="images/meitu-works/OkQTdG0GnmDVobw.jpeg" class="applied-px-img" data-category="assets" loading="lazy" style="left:14.7917%;top:20.9590%;width:11.6667%;height:4.1134%;">
+                <img src="images/meitu-works/p6zsm3D5nd6bj3n.jpeg" class="applied-px-img" data-category="assets" loading="lazy" style="left:2.5694%;top:25.1948%;width:24.0972%;height:5.6315%;">
+                <img src="images/meitu-works/a0QfOYjyne6dO06.jpeg" class="applied-px-img" data-category="assets" loading="lazy" style="left:27.5694%;top:29.3573%;width:15.2778%;height:8.0800%;">
+                <img src="images/meitu-works/67161e3650ae86283.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:43.8889%;top:29.3573%;width:15.2778%;height:8.0800%;">
+                <img src="images/meitu-works/l1aC5eP3XRY0EdJ.jpeg" class="applied-px-img" data-category="assets" loading="lazy" style="left:60.2778%;top:29.3573%;width:15.2778%;height:8.0800%;">
+                <img src="images/meitu-works/669497529baf98519.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:2.7083%;top:30.9488%;width:23.7500%;height:14.9112%;">
+                <img src="images/meitu-works/0K0T38QXqEam61d.jpeg" class="applied-px-img" data-category="assets" loading="lazy" style="left:76.5972%;top:34.9153%;width:20.6944%;height:10.9447%;">
+                <img src="images/meitu-works/kPah5gKRNGmaOnK.jpeg" class="applied-px-img" data-category="assets" loading="lazy" style="left:27.5694%;top:37.7800%;width:15.2778%;height:8.0800%;">
+                <img src="images/meitu-works/gZQsw4m2E0PLddG.jpeg" class="applied-px-img" data-category="assets" loading="lazy" style="left:43.8889%;top:37.7800%;width:15.2778%;height:8.0800%;">
+                <img src="images/meitu-works/66e12d90c64755358.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:60.2778%;top:37.7800%;width:15.2778%;height:8.0800%;">
+                <img src="images/meitu-works/666133efa2bcf4994.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:2.7083%;top:46.2517%;width:17.0139%;height:8.9859%;">
+                <img src="images/meitu-works/669740cb4afe52987.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:20.6250%;top:46.2517%;width:17.0139%;height:8.9859%;">
+                <img src="images/meitu-works/66b5e96d2b88b943.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:38.5417%;top:46.2517%;width:17.0139%;height:8.9859%;">
+                <img src="images/meitu-works/0K0T3O1Ow9Zwelz.jpeg" class="applied-px-img" data-category="assets" loading="lazy" style="left:56.3194%;top:46.2517%;width:25.5556%;height:9.0104%;">
+                <img src="images/meitu-works/668664796f2c860.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:82.8472%;top:46.2762%;width:14.4444%;height:9.0349%;">
+                <img src="images/meitu-works/675aa3278de7b3748.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:82.8472%;top:55.5070%;width:14.4444%;height:9.0349%;">
+                <img src="images/meitu-works/670f26876459e9028.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:2.7083%;top:55.5315%;width:17.0139%;height:8.9859%;">
+                <img src="images/meitu-works/67809ba875d774542.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:20.6250%;top:55.5315%;width:17.0139%;height:8.9859%;">
+                <img src="images/meitu-works/67c51de35bf3a9474.png" class="applied-px-img" data-category="assets" loading="lazy" style="left:38.5417%;top:55.5315%;width:17.0139%;height:8.9859%;">
+                <img src="images/meitu-works/66b1cb3ec91ae9789.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:56.3194%;top:55.5315%;width:25.5556%;height:9.0104%;">
+                <img src="images/meitu-works/o52C8novXQKdzeN.jpeg" class="applied-px-img" data-category="assets" loading="lazy" style="left:82.8472%;top:64.7378%;width:14.4444%;height:9.0349%;">
+                <img src="images/meitu-works/4p1s3xNv5ZGKZeV.jpeg" class="applied-px-img" data-category="assets" loading="lazy" style="left:56.3194%;top:64.7867%;width:25.5556%;height:9.0104%;">
+                <img src="images/meitu-works/9lLILJjZqdnLEqo.jpeg" class="applied-px-img" data-category="assets" loading="lazy" style="left:2.7083%;top:64.7867%;width:17.0139%;height:9.0104%;">
+                <img src="images/meitu-works/odaf81Qedd8RWb6.jpeg" class="applied-px-img" data-category="assets" loading="lazy" style="left:38.5417%;top:64.7867%;width:17.0139%;height:9.0104%;">
+                <img src="images/meitu-works/choose_your_floor.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:20.6250%;top:64.7867%;width:17.0139%;height:8.9859%;">
+                <!-- last 10: 5 per row (255×255px each, ~21px gap) -->
+                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:2.7083%;top:74.0450%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/s37.svg">
+                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_9.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:21.8750%;top:74.0450%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/s36.svg">
+                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_1.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:41.0417%;top:74.0450%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/s38.svg">
+                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_6.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:60.2083%;top:74.0450%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/s34.svg">
+                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_4.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:79.3750%;top:74.0450%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/s33.svg">
+                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_3.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:2.7083%;top:80.8148%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/s39.svg">
+                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_5.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:21.8750%;top:80.8148%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/s31.svg">
+                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_8.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:41.0417%;top:80.8148%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/s32.svg">
+                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_7.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:60.2083%;top:80.8148%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/s35.svg">
+                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_2.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:79.3750%;top:80.8148%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/s30.svg">
+            </div>
+        </div>
+        </div><!-- /.applied-clip-wrap -->
     </div>
 
     
+<script src="https://player.vimeo.com/api/player.js"></script>
 <script src="data/works.js"></script>
 <script>
 (() => {
@@ -1134,6 +2022,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
 
   function typePageText(pageEl) {
     if (!pageEl) return;
+    if (pageEl.classList.contains('md-page')) return;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduceMotion) return;
 
@@ -1144,7 +2033,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
       let node = walker.nextNode();
       while (node) {
         const parent = node.parentElement;
-        if (parent && !parent.closest('.back-arrow') && !parent.closest('.work-title')) {
+        if (parent && !parent.closest('.back-arrow') && !parent.closest('.work-title') && !parent.closest('.md-footer-info')) {
           if (!excludeSelector || !parent.closest(excludeSelector)) {
             const tag = parent.tagName;
             if (tag !== 'SCRIPT' && tag !== 'STYLE') {
@@ -1158,7 +2047,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
       return targets;
     };
 
-    const startStream = (targets) => {
+    const startStream = (targets, onComplete) => {
       const stream = [];
       targets.forEach((textNode) => {
         const source = typeOriginalText.get(textNode) || '';
@@ -1166,14 +2055,14 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
         textNode.nodeValue = '';
         stream.push({ node: textNode, text: source });
       });
-      if (!stream.length) return;
+      if (!stream.length) { if (onComplete) onComplete(); return; }
 
       let blockIndex = 0;
       let charIndex = 0;
       const tick = TYPE_STREAM_TICK;
 
       const step = () => {
-        if (blockIndex >= stream.length) return;
+        if (blockIndex >= stream.length) { if (onComplete) onComplete(); return; }
         let remain = TYPE_STREAM_STEP_CHARS;
         while (remain > 0 && blockIndex < stream.length) {
           const block = stream[blockIndex];
@@ -1188,7 +2077,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
             charIndex = 0;
           }
         }
-        if (blockIndex >= stream.length) return;
+        if (blockIndex >= stream.length) { if (onComplete) onComplete(); return; }
 
         const t = window.setTimeout(() => {
           pendingTypeStarts.delete(t);
@@ -1200,6 +2089,16 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
       step();
     };
 
+    if (pageEl.id === 'landing') {
+      const conceptTargets = collectTargets(pageEl.querySelector('.landing-footer-concept'));
+      const bioTargets     = collectTargets(pageEl.querySelector('.landing-footer-bio'));
+      const contactTargets = collectTargets(pageEl.querySelector('.landing-footer-contact'));
+      startStream(conceptTargets);
+      startStream(bioTargets);
+      startStream(contactTargets);
+      return;
+    }
+
     if (pageEl.id === 'identity') {
       const isMobileView = window.innerWidth < 769;
       if (isMobileView) {
@@ -1207,9 +2106,11 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
         startStream(mobileTargets);
         return;
       }
-      const conceptTargets = collectTargets(pageEl, '#identityLinks');
+      const headTargets = collectTargets(pageEl.querySelector('.identity-desktop-head'));
+      const bioTargets = collectTargets(pageEl.querySelector('.identity-desktop-bio'));
       const linksTargets = collectTargets(document.getElementById('identityLinks'));
-      startStream(conceptTargets);
+      startStream(headTargets);
+      startStream(bioTargets);
       startStream(linksTargets);
       return;
     }
@@ -1226,8 +2127,10 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
       target.classList.add('active');
       queuePosterBackBlendUpdate();
     }
+    if (location.hash !== '#' + pageId) location.hash = pageId;
 
     // Init per-page interactions (lazy)
+    if (pageId === 'nav') initNavSwap();
     if (pageId === 'menu') initMenuSwap();
     if (pageId === 'poster') {
       ensurePosterPlaceholders();
@@ -1313,6 +2216,20 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   }
 
   initLandingFlash();
+
+  function initIconHoverSwap() {
+    if (isTouch) return;
+    const bindSwap = (selector, normalSrc, hoverSrc) => {
+      document.querySelectorAll(selector).forEach((img) => {
+        if (!img) return;
+        img.addEventListener('mouseenter', () => { img.src = hoverSrc; });
+        img.addEventListener('mouseleave', () => { img.src = normalSrc; });
+      });
+    };
+    bindSwap('img.back-icon', 'svg/back-arrow.svg', 'SVG/資產 18反藍.svg');
+    bindSwap('img.landing-enter-icon', 'svg/nav-arrow.svg', 'SVG/資產 25反藍.svg');
+  }
+  initIconHoverSwap();
 
   // ---------------------------
   // Poster metadata source:
@@ -1540,7 +2457,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
       stackEl.innerHTML = '';
       const mobileImages = images.length ? [...images] : [buildPlaceholderDataURI(work)];
       if (window.innerWidth < 769 && key === 'super_power_100' && mobileImages.length > 1) {
-        mobileImages[1] = 'image/works/資產 818@2x.png';
+        mobileImages[1] = 'images/graphic/資產 818@2x.png';
       }
       mobileImages.forEach((src, idx) => {
         const stackImg = document.createElement('img');
@@ -1725,6 +2642,23 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   window.addEventListener('resize', queuePosterBackBlendUpdate);
   window.addEventListener('touchmove', queuePosterBackBlendUpdate, { passive: true });
 
+  // -------- Nav hover swap --------
+  let navInited = false;
+  function initNavSwap() {
+    if (navInited) return;
+    const btns = document.querySelectorAll('.nav-hotspot');
+    if (!btns.length) return;
+    btns.forEach(btn => {
+      const target   = btn.getAttribute('data-target');
+      const groupId  = btn.getAttribute('data-group');
+      const groupEl  = groupId ? document.getElementById(groupId) : null;
+      btn.addEventListener('mouseenter', () => { if (groupEl) groupEl.classList.add('nav-hovered'); });
+      btn.addEventListener('mouseleave', () => { if (groupEl) groupEl.classList.remove('nav-hovered'); });
+      btn.addEventListener('click', () => { if (target) goTo(target); });
+    });
+    navInited = true;
+  }
+
   // -------- Menu hover swap (single SVG + hotspots) --------
   let menuInited = false;
   function initMenuSwap() {
@@ -1733,7 +2667,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     const btns = document.querySelectorAll('.menu-hotspot');
     if (!menuSvg || !btns.length) return;
 
-    const originalSrc = menuSvg.getAttribute('src') || 'SVG/資產 24.svg';
+    const originalSrc = menuSvg.getAttribute('src') || 'svg/graphic-motion.svg';
 
     btns.forEach(btn => {
       const hoverSrc = btn.getAttribute('data-src');
@@ -1747,6 +2681,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
       });
       btn.addEventListener('click', () => {
         if (target) goTo(target);
+        document.body.classList.toggle('on-motion-project', target === 'project');
       });
     });
 
@@ -1755,19 +2690,19 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     menuInited = true;
   }
 
-  // -------- Custom cursor (SVG/mouse.svg) --------
+  // -------- Custom cursor (svg/mouse.svg) --------
   let cursor = null;
   if (!isTouch) {
     cursor = document.createElement('img');
     cursor.id = 'customCursor';
-    cursor.src = 'SVG/mouse.svg';
+    cursor.src = 'svg/mouse.svg';
     cursor.alt = 'cursor';
     document.body.appendChild(cursor);
   }
   // Landing logo hover swap (white -> blue)
   const landingLogo = document.getElementById('landingLogo');
   if (landingLogo) {
-    const logoNormal = 'SVG/liminalsynths-logo.svg';
+    const logoNormal = 'svg/liminalsynths-logo.svg';
     const logoBlue = 'SVG/liminalsynths-logo blue.svg';
     landingLogo.addEventListener('mouseenter', () => { landingLogo.src = logoBlue; });
     landingLogo.addEventListener('mouseleave', () => { landingLogo.src = logoNormal; });
@@ -1779,7 +2714,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     if (!cursor) return;
     cursor.style.left = x + 'px';
     cursor.style.top  = y + 'px';
-    cursor.style.transform = `translate(-50%, -50%) scale(${scale})`;
+    cursor.style.transform = `scale(${scale})`;
   };
 
   let lastX = -100, lastY = -100;
@@ -2170,10 +3105,215 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     posterInited = true;
   }
 
-  // default landing
-  goTo('landing');
+  // ===== Motion detail pages (Vimeo) =====
+  const MD_PAGES = ['motion-sirius', 'motion-thread', 'motion-anka'];
+  const vimeoPlayers = {};
+
+  function getVimeoPlayer(pid) {
+    if (!vimeoPlayers[pid]) {
+      const iframe = document.querySelector('#' + pid + ' .md-video-full');
+      if (iframe && window.Vimeo) {
+        vimeoPlayers[pid] = new Vimeo.Player(iframe);
+      }
+    }
+    return vimeoPlayers[pid] || null;
+  }
+
+  const origGoTo = window.goTo;
+  window.goTo = function(pageId) {
+    origGoTo(pageId);
+    document.body.classList.toggle('on-motion-project', pageId === 'project');
+    document.body.classList.toggle('on-md-video-page', MD_PAGES.includes(pageId));
+    // Pause all motion videos when leaving their pages
+    MD_PAGES.forEach(function(pid) {
+      if (pid !== pageId) {
+        const p = getVimeoPlayer(pid);
+        if (p) p.pause();
+      }
+    });
+    // Reset scroll to top when entering a motion detail page
+    if (MD_PAGES.includes(pageId)) {
+      const pageEl = document.getElementById(pageId);
+      if (pageEl) pageEl.scrollTop = 0;
+    }
+  };
+
+  // Video overlay fade behavior (Vimeo)
+  function initMdVideoFade(pageId, overlayId) {
+    const pageEl = document.getElementById(pageId);
+    if (!pageEl) return;
+    const overlay = document.getElementById(overlayId);
+    const backArrow = pageEl.querySelector('.back-arrow');
+    const videoSection = pageEl.querySelector('.md-video-section');
+    if (!overlay) return;
+
+    let hideTimer = null;
+    let isPlaying = false;
+    const cursorEl = document.getElementById('customCursor');
+
+    function showOverlay() {
+      overlay.classList.remove('md-hidden');
+      if (backArrow) backArrow.classList.remove('md-hidden');
+      if (cursorEl) cursorEl.classList.remove('md-hidden');
+      if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+    }
+    function scheduleHide() {
+      if (hideTimer) clearTimeout(hideTimer);
+      hideTimer = setTimeout(function() {
+        if (isPlaying) {
+          overlay.classList.add('md-hidden');
+          if (backArrow) backArrow.classList.add('md-hidden');
+          if (cursorEl) cursorEl.classList.add('md-hidden');
+        }
+      }, 2000);
+    }
+
+    // Attach Vimeo events after SDK loads
+    function attachVimeoEvents() {
+      const p = getVimeoPlayer(pageId);
+      if (!p) return;
+      p.on('play', function() { isPlaying = true; scheduleHide(); });
+      p.on('pause', function() { isPlaying = false; showOverlay(); });
+      p.on('ended', function() { isPlaying = false; showOverlay(); });
+    }
+    // Retry until Vimeo SDK is ready
+    if (window.Vimeo) {
+      attachVimeoEvents();
+    } else {
+      const sdk = document.querySelector('script[src*="player.vimeo.com"]');
+      if (sdk) sdk.addEventListener('load', attachVimeoEvents);
+    }
+
+    function onActivity() {
+      showOverlay();
+      if (isPlaying) scheduleHide();
+    }
+    pageEl.addEventListener('mousemove', onActivity);
+    pageEl.addEventListener('touchstart', onActivity, { passive: true });
+
+    // Pause video when scrolled past the video section
+    if (videoSection) {
+      pageEl.addEventListener('scroll', function() {
+        if (pageEl.scrollTop > videoSection.offsetHeight * 0.5 && isPlaying) {
+          const p = getVimeoPlayer(pageId);
+          if (p) p.pause();
+        }
+      });
+    }
+  }
+
+  initMdVideoFade('motion-sirius', 'siriusOverlay');
+  initMdVideoFade('motion-thread', 'threadOverlay');
+  initMdVideoFade('motion-anka', 'ankaOverlay');
+
+
+  // ===== Applied (meitu works) tab filtering =====
+  (function() {
+    const tabs = document.querySelectorAll('#applied .applied-tab-item[data-tab]');
+    const works = document.querySelectorAll('#applied .applied-px-img[data-category]');
+
+    tabs.forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        const selected = tab.getAttribute('data-tab');
+        // switch active tab
+        tabs.forEach(function(t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        // filter works
+        works.forEach(function(img) {
+          img.style.display = img.getAttribute('data-category') === selected ? '' : 'none';
+        });
+      });
+    });
+  })();
+
+
+  // ===== Motion landing: banner on hover =====
+  (function() {
+    const banners = {
+      anka:   document.getElementById('project-banner-anka'),
+      sirius: document.getElementById('project-banner-sirius'),
+      thread: document.getElementById('project-banner-thread'),
+    };
+    function clearBanners() {
+      Object.values(banners).forEach(function(b) { if (b) b.classList.remove('active'); });
+    }
+    document.querySelectorAll('#project .project-logo').forEach(function(logo) {
+      logo.addEventListener('mouseenter', function() {
+        clearBanners();
+        var key = logo.closest('[data-banner]') ? logo.closest('[data-banner]').dataset.banner : null;
+        // find data-banner on logo itself or parent
+        var el = logo;
+        while (el && !el.dataset.banner) el = el.parentElement;
+        if (el && banners[el.dataset.banner]) banners[el.dataset.banner].classList.add('active');
+      });
+      logo.addEventListener('mouseleave', clearBanners);
+    });
+  })();
+
+  // ===== Motion landing: logo scale on hover =====
+  (function() {
+    const logos = Array.from(document.querySelectorAll('#project .project-logo'));
+    function reset() { logos.forEach(function(l) { l.style.transform = ''; }); }
+    logos.forEach(function(logo) {
+      logo.addEventListener('mouseenter', function() {
+        logos.forEach(function(l) {
+          l.style.transform = l === logo ? 'scale(1.05)' : 'scale(0.95)';
+        });
+      });
+      logo.addEventListener('mouseleave', reset);
+    });
+  })();
+
+  // default landing, then restore from hash if present
+  const _initHash = location.hash.slice(1);
+  if (_initHash && document.getElementById(_initHash)) {
+    window.goTo(_initHash);
+  } else {
+    goTo('landing');
+  }
 })();
+
+/* ===== Photo lightbox ===== */
+document.addEventListener('DOMContentLoaded', function(){
+  const lb     = document.getElementById('photo-lightbox');
+  const lbImg  = document.getElementById('photo-lightbox-img');
+  const lbClose= document.getElementById('photo-lightbox-close');
+
+  function openLightbox(src) {
+    lbImg.src = src;
+    lb.classList.add('open');
+  }
+  function closeLightbox() {
+    lb.classList.remove('open');
+    lbImg.src = '';
+  }
+
+  document.addEventListener('click', function(e) {
+    if (lb.contains(e.target)) return;
+    const img = e.target.closest('.md-photos-section img, .applied-px-img:not(.applied-hero)');
+    if (img) {
+      e.stopPropagation();
+      openLightbox(img.dataset.lightboxSrc || img.src);
+    }
+  }, true);
+
+  lbClose.addEventListener('click', closeLightbox);
+  lb.addEventListener('click', function(e) {
+    if (e.target === lb) closeLightbox();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeLightbox();
+  });
+});
 </script>
+
+<!-- Photo lightbox overlay -->
+<div id="photo-lightbox">
+  <button id="photo-lightbox-close" class="clickable" aria-label="close">
+    <img src="svg/back-arrow.svg" alt="close">
+  </button>
+  <img id="photo-lightbox-img" src="" alt="lightbox">
+</div>
 
 </body>
 </html>

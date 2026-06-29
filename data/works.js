@@ -6,8 +6,8 @@ window.WORKS_DATA = {
     year: "2023",
     type: "digital visual art",
     desc: "an abstract beast modeled to symbolize mutation.",
-    cover: "image/works/mutant/cover.png",
-    images: ["image/works/mutant/cover.png"]
+    cover: "images/graphic/mutant/cover.png",
+    images: ["images/graphic/mutant/cover.png"]
   },
   melite: {
     no: 3,
@@ -16,8 +16,8 @@ window.WORKS_DATA = {
     year: "2023",
     type: "digital visual art",
     desc: "a digitally modeled expression of joy and diversity.",
-    cover: "image/works/melite/cover.jpg",
-    images: ["image/works/melite/cover.jpg"]
+    cover: "images/graphic/melite/cover.jpg",
+    images: ["images/graphic/melite/cover.jpg"]
   },
   pearl: {
     no: 4,
@@ -26,8 +26,8 @@ window.WORKS_DATA = {
     year: "2023",
     type: "digital visual art",
     desc: "an experimental take on the proverb \"untainted by the mud,\" created with digital modeling and post-production.",
-    cover: "image/works/pearl/cover.png",
-    images: ["image/works/pearl/cover.png"]
+    cover: "images/graphic/pearl/cover.png",
+    images: ["images/graphic/pearl/cover.png"]
   },
   passion: {
     no: 5,
@@ -36,8 +36,8 @@ window.WORKS_DATA = {
     year: "2022",
     type: "digital wallpaper",
     desc: "a minimalist, modern desktop wallpaper created through digital modeling.",
-    cover: "image/works/passion/cover.jpg",
-    images: ["image/works/passion/cover.jpg"]
+    cover: "images/graphic/passion/cover.jpg",
+    images: ["images/graphic/passion/cover.jpg"]
   },
   meteorite: {
     no: 6,
@@ -46,8 +46,8 @@ window.WORKS_DATA = {
     year: "2020",
     type: "digital wallpaper",
     desc: "a minimalist, modern desktop wallpaper created through digital modeling.",
-    cover: "image/works/meteorite/cover.png",
-    images: ["image/works/meteorite/cover.png"]
+    cover: "images/graphic/meteorite/cover.png",
+    images: ["images/graphic/meteorite/cover.png"]
   },
   multiboost: {
     no: 7,
@@ -56,8 +56,8 @@ window.WORKS_DATA = {
     year: "2019",
     type: "visual poster",
     desc: "a visualization of vibrant color impact and pulsing rhythm, created through digital modeling and post-production.",
-    cover: "image/works/multiboost/cover.jpg",
-    images: ["image/works/multiboost/cover.jpg"]
+    cover: "images/graphic/multiboost/cover.jpg",
+    images: ["images/graphic/multiboost/cover.jpg"]
   },
   iridescent: {
     no: 8,
@@ -66,8 +66,8 @@ window.WORKS_DATA = {
     year: "2017",
     type: "visual poster",
     desc: "a luminous, iridescent form rendered through digital modeling and post-production.",
-    cover: "image/works/iridescent/cover.jpg",
-    images: ["image/works/iridescent/cover.jpg"]
+    cover: "images/graphic/iridescent/cover.jpg",
+    images: ["images/graphic/iridescent/cover.jpg"]
   },
   born_this_way: {
     no: 9,
@@ -76,8 +76,8 @@ window.WORKS_DATA = {
     year: "2017",
     type: "digital visual art",
     desc: "“after cosmic collision comes life” — a structural burst of color created through digital modeling and post-production.",
-    cover: "image/works/born-this-way/cover.jpg",
-    images: ["image/works/born-this-way/cover.jpg"]
+    cover: "images/graphic/born-this-way/cover.jpg",
+    images: ["images/graphic/born-this-way/cover.jpg"]
   },
   strike: {
     no: 10,
@@ -86,11 +86,11 @@ window.WORKS_DATA = {
     year: "2021",
     type: "visual poster",
     desc: "playful, colorful discs collide in a digital space, presented through modeling and post-production.",
-    cover: "image/works/strike/cover.jpg",
+    cover: "images/graphic/strike/cover.jpg",
     images: [
-      "image/works/strike/cover.jpg",
-      "image/works/strike/cover-01.png",
-      "image/works/strike/cover-02.png"
+      "images/graphic/strike/cover.jpg",
+      "images/graphic/strike/cover-01.png",
+      "images/graphic/strike/cover-02.png"
     ]
   },
   mirror: {
@@ -100,8 +100,8 @@ window.WORKS_DATA = {
     year: "2021",
     type: "visual poster",
     desc: "a surreal mirror opens a portal in a gradient world, created through digital modeling and post-production.",
-    cover: "image/works/mirror/cover.jpg",
-    images: ["image/works/mirror/cover.jpg"]
+    cover: "images/graphic/mirror/cover.jpg",
+    images: ["images/graphic/mirror/cover.jpg"]
   },
   foray: {
     no: 12,
@@ -110,8 +110,8 @@ window.WORKS_DATA = {
     year: "2021",
     type: "visual poster",
     desc: "a massive celestial body lands on barren ground. its origin and purpose unknown. created with illustration and post-production tools.",
-    cover: "image/works/foray/cover.jpg",
-    images: ["image/works/foray/cover.jpg"]
+    cover: "images/graphic/foray/cover.jpg",
+    images: ["images/graphic/foray/cover.jpg"]
   },
   the_crown: {
     no: 13,
@@ -120,8 +120,8 @@ window.WORKS_DATA = {
     year: "2021",
     type: "visual poster",
     desc: "a crown of dominance above alien colonies, created through illustration, modeling, and post-production.",
-    cover: "image/works/the-crown/cover.png",
-    images: ["image/works/the-crown/cover.png"]
+    cover: "images/graphic/the-crown/cover.png",
+    images: ["images/graphic/the-crown/cover.png"]
   },
   yungboi_harris: {
     no: 14,
@@ -130,8 +130,8 @@ window.WORKS_DATA = {
     year: "2018",
     type: "album cover",
     desc: "an album cover designed for rapper t.i.g.’s release “yungboi harris.”",
-    cover: "image/works/yungboi-harris/cover.jpg",
-    images: ["image/works/yungboi-harris/cover.jpg"]
+    cover: "images/graphic/yungboi-harris/cover.jpg",
+    images: ["images/graphic/yungboi-harris/cover.jpg"]
   },
   parallel_paradise: {
     no: 15,
@@ -140,8 +140,8 @@ window.WORKS_DATA = {
     year: "2022",
     type: "typographic",
     desc: "a custom typeface designed for the solo exhibition \"parallel paradise,\" created through illustration and modeling.",
-    cover: "image/works/parallel paradise.png",
-    images: ["image/works/parallel paradise.png"]
+    cover: "images/graphic/parallel paradise.png",
+    images: ["images/graphic/parallel paradise.png"]
   },
   fallen_angel: {
     no: 16,
@@ -150,8 +150,8 @@ window.WORKS_DATA = {
     year: "2022",
     type: "typographic",
     desc: "a typeface inspired by the painting \"fallen angel,\" created using illustration and modeling.",
-    cover: "image/works/fallen angel.png",
-    images: ["image/works/fallen angel.png"]
+    cover: "images/graphic/fallen angel.png",
+    images: ["images/graphic/fallen angel.png"]
   },
   stupid: {
     no: 17,
@@ -160,8 +160,8 @@ window.WORKS_DATA = {
     year: "2022",
     type: "typographic",
     desc: "a typeface inspired by lady gaga's song \"stupid love,\" created through illustration and modeling.",
-    cover: "image/works/stupid.png",
-    images: ["image/works/stupid.png"]
+    cover: "images/graphic/stupid.png",
+    images: ["images/graphic/stupid.png"]
   },
   super_power_100: {
     no: 18,
@@ -170,13 +170,13 @@ window.WORKS_DATA = {
     year: "2022",
     type: "illustration",
     desc: "\"super power 100\" is a drawing project that visualizes 100 unique powers possessed by a boy named john.",
-    cover: "image/works/super power 100 inside.png",
+    cover: "images/graphic/super power 100 inside.png",
     images: [
-      "image/works/super power 100 inside.png",
-      "image/works/資產 817.png",
-      "image/works/layout3.png",
-      "image/works/Comp 1_4.gif",
-      "image/works/laser eyes okay.jpg"
+      "images/graphic/super power 100 inside.png",
+      "images/graphic/資產 817.png",
+      "images/graphic/layout3.png",
+      "images/graphic/Comp 1_4.gif",
+      "images/graphic/laser eyes okay.jpg"
     ]
   },
   wonderland: {
@@ -186,7 +186,7 @@ window.WORKS_DATA = {
     year: "2017",
     type: "illustration",
     desc: "a teal penguin wandering through a world where cuteness meets the uncanny.",
-    cover: "image/works/wonderland.png",
-    images: ["image/works/wonderland.png"]
+    cover: "images/graphic/wonderland.png",
+    images: ["images/graphic/wonderland.png"]
   }
 };
