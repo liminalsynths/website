@@ -488,11 +488,23 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     border: 0;
     padding: 0;
   }
-  .landing-footer-bar { height: auto; padding-bottom: 16px; }
-  .landing-footer-col { position: static; display: block; }
-  .landing-footer-concept { font-size: 12px; padding: 0 18px; white-space: normal; }
-  .landing-footer-bio { padding: 8px 18px 0; left: auto; }
-  .landing-footer-contact { right: auto; padding: 8px 18px 0; }
+  .landing-footer-bar { position: absolute; inset: 0; height: 100%; pointer-events: none; }
+  .landing-footer-col { position: absolute; display: block; pointer-events: auto; }
+  .landing-footer-concept {
+    font-size: 12px; white-space: normal;
+    top: 47dvh; left: calc(10vw + 10px); right: 10vw;
+    bottom: auto;
+  }
+  .landing-footer-bio {
+    font-size: 11px;
+    top: calc(47dvh + 74px); left: calc(10vw + 10px); right: 10vw;
+    bottom: auto;
+  }
+  .landing-footer-contact {
+    bottom: 8vh; left: calc(10vw + 10px);
+    top: auto; right: auto;
+  }
+  #landing .landing-content { margin-bottom: 30vh; }
   #landing .landing-enter-icon{
     width: var(--mobile-back-size);
     height: var(--mobile-back-size);
@@ -1135,6 +1147,9 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     gap: 14px;
     padding: 28px 20px 44px;
   }
+  .md-page .md-footer-info {
+    display: none;
+  }
 }
 
 /* ===== Applied footer override ===== */
@@ -1272,26 +1287,80 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
         }
 
 @media (max-width: 768px) {
-  #applied .back-arrow { top: max(16px, env(safe-area-inset-top)); right: 16px; }
+  #applied .back-arrow { position: fixed !important; top: 73dvh !important; left: 80% !important; right: auto !important; transform: translateX(-50%) !important; }
+  #applied .back-arrow .back-icon { width: 45px !important; height: 45px !important; }
+
+  /* Topbar: logo centered, tabs below */
+  .applied-topbar {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: unset !important;
+    align-items: center !important;
+    padding: 44px 24px 20px !important;
+    gap: 20px !important;
+    background: transparent !important;
+  }
+  .applied-logo-card {
+    order: 1 !important;
+    margin-top: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    justify-self: unset !important;
+  }
+  .applied-logo-card img {
+    width: 200px !important;
+  }
+  .applied-tabs {
+    position: fixed !important;
+    bottom: 15% !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    order: unset !important;
+    display: flex !important;
+    justify-content: center !important;
+    gap: 20px !important;
+    z-index: 100 !important;
+  }
+  .applied-tab-item svg {
+    height: 23px !important;
+  }
+  .applied-topbar-meta {
+    display: none !important;
+  }
   .applied-clip-wrap { height: auto; overflow: visible; }
+  .banner-mockup-item { width: 100% !important; }
+  .banner-grid { flex-direction: column; gap: 3vw; padding: 4vw; }
+  .video-grid-item { flex-direction: column; gap: 3vw; }
+  .video-embed-wrap { flex: none; width: 80vw; margin: 0 auto; }
   .applied-layout { padding-bottom: 0; }
   .applied-inner {
     position: static;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 4px;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
     transform: none;
     padding: 4px;
   }
+  .applied-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
   .applied-px-img {
     position: static;
+    display: block;
     width: 100% !important;
     height: auto !important;
     aspect-ratio: unset;
     object-fit: cover;
   }
+  .applied-px-img.banner-landscape { aspect-ratio: 3/1; }
   .applied-hero {
-    grid-column: 1 / -1;
     width: 100% !important;
     height: auto !important;
   }
@@ -1300,6 +1369,17 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
 
 /* ===== Motion mobile ===== */
 @media (max-width: 768px) {
+
+  /* --- Banner rotation for sirius & thread --- */
+  #project-banner-sirius,
+  #project-banner-thread {
+    inset: auto;
+    width: 100vh;
+    height: 100vw;
+    top: calc((100vh - 100vw) / 2);
+    left: calc((100vw - 100vh) / 2);
+    transform: rotate(-90deg);
+  }
 
   /* --- Landing: stack logos vertically --- */
   #project-logos {
@@ -1317,12 +1397,12 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   #project [data-banner="sirius"] .project-logo { height: 27px !important; }
   #project [data-banner="thread"] .project-logo { height: 86px !important; }
 
-  /* --- Detail: back arrow fixed top-right --- */
+  /* --- Detail: back arrow matches other pages --- */
   .md-page .back-arrow {
-    top: max(16px, env(safe-area-inset-top));
-    right: 16px;
-    left: auto;
-    transform: none;
+    top: var(--back-arrow-y-mobile);
+    left: 80%;
+    right: auto;
+    transform: translateX(-50%);
   }
   .md-page .back-arrow.md-hidden { opacity: 0; }
 
@@ -1510,6 +1590,23 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   height: 56px;
   display: block;
   filter: invert(1);
+}
+@media (max-width: 768px) {
+  #photo-lightbox-close {
+    top: 73dvh;
+    left: 80%;
+    right: auto;
+    transform: translateX(-50%);
+  }
+  #photo-lightbox-close img {
+    width: 45px !important;
+    height: 45px !important;
+  }
+  #photo-lightbox img {
+    max-width: 88vw;
+    max-height: 60vh;
+    margin-bottom: 15vh;
+  }
 }
 </style>
 </head>
@@ -1993,28 +2090,28 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
                 <img src="images/meitu-works/675aa3278de7b3748.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:82.8472%;top:55.5070%;width:14.4444%;height:9.0349%;">
                 <img src="images/meitu-works/670f26876459e9028.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:2.7083%;top:55.5315%;width:17.0139%;height:8.9859%;">
                 <img src="images/meitu-works/67809ba875d774542.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:20.6250%;top:55.5315%;width:17.0139%;height:8.9859%;">
-                <img src="images/meitu-works/67c51de35bf3a9474.png" class="applied-px-img" data-category="assets" loading="lazy" style="left:38.5417%;top:55.5315%;width:17.0139%;height:8.9859%;">
                 <img src="images/meitu-works/66b1cb3ec91ae9789.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:56.3194%;top:55.5315%;width:25.5556%;height:9.0104%;">
                 <img src="images/meitu-works/o52C8novXQKdzeN.jpeg" class="applied-px-img" data-category="assets" loading="lazy" style="left:82.8472%;top:64.7378%;width:14.4444%;height:9.0349%;">
                 <img src="images/meitu-works/4p1s3xNv5ZGKZeV.jpeg" class="applied-px-img" data-category="assets" loading="lazy" style="left:56.3194%;top:64.7867%;width:25.5556%;height:9.0104%;">
                 <img src="images/meitu-works/9lLILJjZqdnLEqo.jpeg" class="applied-px-img" data-category="assets" loading="lazy" style="left:2.7083%;top:64.7867%;width:17.0139%;height:9.0104%;">
                 <img src="images/meitu-works/odaf81Qedd8RWb6.jpeg" class="applied-px-img" data-category="assets" loading="lazy" style="left:38.5417%;top:64.7867%;width:17.0139%;height:9.0104%;">
                 <img src="images/meitu-works/choose_your_floor.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:20.6250%;top:64.7867%;width:17.0139%;height:8.9859%;">
+                <img src="images/meitu-works/67c51de35bf3a9474.png" class="applied-px-img" data-category="assets" loading="lazy" style="left:38.5417%;top:55.5315%;width:17.0139%;height:8.9859%;">
                 <!-- last 10: 5 per row (255×255px each, ~21px gap) -->
-                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:2.7083%;top:74.0450%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/s37.svg">
-                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_9.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:21.8750%;top:74.0450%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/s36.svg">
-                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_1.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:41.0417%;top:74.0450%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/s38.svg">
-                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_6.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:60.2083%;top:74.0450%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/s34.svg">
-                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_4.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:79.3750%;top:74.0450%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/s33.svg">
-                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_3.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:2.7083%;top:80.8148%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/s39.svg">
-                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_5.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:21.8750%;top:80.8148%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/s31.svg">
-                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_8.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:41.0417%;top:80.8148%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/s32.svg">
-                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_7.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:60.2083%;top:80.8148%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/s35.svg">
-                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_2.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:79.3750%;top:80.8148%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/s30.svg">
-                <img src="images/meitu-works/1029%204201029_420.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:2.7083%;top:87.5%;width:46.55%;height:6.70%;">
-                <img src="images/meitu-works/1200%20490-21029_420.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:50.749%;top:87.5%;width:46.55%;height:6.70%;">
-                <img src="images/meitu-works/banner.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:2.7083%;top:94.726%;width:46.55%;height:6.70%;">
-                <img src="images/meitu-works/children%27s%20day.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:50.749%;top:94.726%;width:46.55%;height:6.70%;">
+                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:2.7083%;top:74.0450%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/新增包含項目的檔案夾/新增包含項目的檔案夾/s37.png">
+                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_9.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:21.8750%;top:74.0450%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/新增包含項目的檔案夾/新增包含項目的檔案夾/s36.png">
+                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_1.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:41.0417%;top:74.0450%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/新增包含項目的檔案夾/新增包含項目的檔案夾/s38.png">
+                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_6.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:60.2083%;top:74.0450%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/新增包含項目的檔案夾/新增包含項目的檔案夾/s34.png">
+                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_4.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:79.3750%;top:74.0450%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/新增包含項目的檔案夾/新增包含項目的檔案夾/s33.png">
+                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_3.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:2.7083%;top:80.8148%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/新增包含項目的檔案夾/新增包含項目的檔案夾/s39.png">
+                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_5.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:21.8750%;top:80.8148%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/新增包含項目的檔案夾/新增包含項目的檔案夾/s31.png">
+                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_8.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:41.0417%;top:80.8148%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/新增包含項目的檔案夾/新增包含項目的檔案夾/s32.png">
+                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_7.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:60.2083%;top:80.8148%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/新增包含項目的檔案夾/新增包含項目的檔案夾/s35.png">
+                <img src="images/meitu-works/%E5%B0%81%E9%9D%A2%E5%9C%96_2.jpg" class="applied-px-img" data-category="assets" loading="lazy" style="left:79.3750%;top:80.8148%;width:17.7083%;height:6.2439%;" data-lightbox-src="svg/stickers/新增包含項目的檔案夾/新增包含項目的檔案夾/s30.png">
+                <img src="images/meitu-works/1029%204201029_420.jpg" class="applied-px-img banner-landscape" data-category="assets" loading="lazy" style="left:2.7083%;top:87.5%;width:46.55%;height:6.70%;">
+                <img src="images/meitu-works/1200%20490-21029_420.jpg" class="applied-px-img banner-landscape" data-category="assets" loading="lazy" style="left:50.749%;top:87.5%;width:46.55%;height:6.70%;">
+                <img src="images/meitu-works/banner.jpg" class="applied-px-img banner-landscape" data-category="assets" loading="lazy" style="left:2.7083%;top:94.726%;width:46.55%;height:6.70%;">
+                <img src="images/meitu-works/children%27s%20day.jpg" class="applied-px-img banner-landscape" data-category="assets" loading="lazy" style="left:50.749%;top:94.726%;width:46.55%;height:6.70%;">
             </div>
         </div>
         </div><!-- /.applied-clip-wrap -->
@@ -3419,6 +3516,58 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
 })();
 
 /* ===== Photo lightbox ===== */
+// Mobile layout for applied-inner: 2 masonry columns, stickers+banners first, Sweet Secret in right col
+(function() {
+  function applyMobileColumns() {
+    if (window.innerWidth > 768) return;
+    const inner = document.querySelector('.applied-inner');
+    if (!inner || inner._mobileCol) return;
+    inner._mobileCol = true;
+
+    // 1. Move stickers and banners to front
+    const toMove = [...inner.querySelectorAll('.applied-px-img[data-lightbox-src], .applied-px-img.banner-landscape')];
+    const ref = inner.firstElementChild;
+    toMove.forEach(function(el) { inner.insertBefore(el, ref); });
+
+    // 2. Create two column divs
+    const leftCol = document.createElement('div');
+    leftCol.className = 'applied-col';
+    const rightCol = document.createElement('div');
+    rightCol.className = 'applied-col';
+
+    const sweetSecret = inner.querySelector('[src*="67c51de35bf3a9474"]');
+    const items = [...inner.children];
+    let leftCount = 0, rightCount = 0;
+
+    items.forEach(function(item) {
+      if (item === sweetSecret) {
+        rightCol.appendChild(item);
+        rightCount++;
+      } else if (leftCount <= rightCount) {
+        leftCol.appendChild(item);
+        leftCount++;
+      } else {
+        rightCol.appendChild(item);
+        rightCount++;
+      }
+    });
+
+    // 3. Move last 2 non-sweetSecret items from right col to left col
+    var rightItems = [...rightCol.children].filter(function(el) { return el !== sweetSecret; });
+    rightItems.slice(-1).forEach(function(el) { leftCol.appendChild(el); });
+
+    // 4. Replace inner content with two columns
+    while (inner.firstChild) inner.removeChild(inner.firstChild);
+    inner.appendChild(leftCol);
+    inner.appendChild(rightCol);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyMobileColumns);
+  } else {
+    applyMobileColumns();
+  }
+})();
+
 document.addEventListener('DOMContentLoaded', function(){
   const lb     = document.getElementById('photo-lightbox');
   const lbImg  = document.getElementById('photo-lightbox-img');
