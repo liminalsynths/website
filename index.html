@@ -2226,8 +2226,8 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
         img.addEventListener('mouseleave', () => { img.src = normalSrc; });
       });
     };
-    bindSwap('img.back-icon', 'svg/back-arrow.svg', 'svg/back-arrow-blue.svg');
-    bindSwap('img.landing-enter-icon', 'svg/nav-arrow.svg', 'svg/nav-arrow-blue.svg');
+    bindSwap('img.back-icon', 'svg/back-arrow.svg', 'svg/back-arrow.svg');
+    bindSwap('img.landing-enter-icon', 'svg/nav-arrow.svg', 'svg/nav-arrow.svg');
   }
   initIconHoverSwap();
 
@@ -2703,7 +2703,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   const landingLogo = document.getElementById('landingLogo');
   if (landingLogo) {
     const logoNormal = 'svg/liminalsynths-logo.svg';
-    const logoBlue = 'svg/liminalsynths-logo-blue.svg';
+    const logoBlue = 'svg/liminalsynths-logo.svg';
     landingLogo.addEventListener('mouseenter', () => { landingLogo.src = logoBlue; });
     landingLogo.addEventListener('mouseleave', () => { landingLogo.src = logoNormal; });
   }
