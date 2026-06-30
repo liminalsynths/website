@@ -2863,8 +2863,10 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
       const target   = btn.getAttribute('data-target');
       const groupId  = btn.getAttribute('data-group');
       const groupEl  = groupId ? document.getElementById(groupId) : null;
-      btn.addEventListener('mouseenter', () => { if (groupEl) groupEl.classList.add('nav-hovered'); });
-      btn.addEventListener('mouseleave', () => { if (groupEl) groupEl.classList.remove('nav-hovered'); });
+      if (!isTouch) {
+        btn.addEventListener('mouseenter', () => { if (groupEl) groupEl.classList.add('nav-hovered'); });
+        btn.addEventListener('mouseleave', () => { if (groupEl) groupEl.classList.remove('nav-hovered'); });
+      }
       btn.addEventListener('click', () => { if (target) goTo(target); });
     });
     navInited = true;
@@ -2884,12 +2886,14 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
       const hoverSrc = btn.getAttribute('data-src');
       const target = btn.getAttribute('data-target');
 
-      btn.addEventListener('mouseenter', () => {
-        if (hoverSrc) menuSvg.src = hoverSrc;
-      });
-      btn.addEventListener('mouseleave', () => {
-        menuSvg.src = originalSrc;
-      });
+      if (!isTouch) {
+        btn.addEventListener('mouseenter', () => {
+          if (hoverSrc) menuSvg.src = hoverSrc;
+        });
+        btn.addEventListener('mouseleave', () => {
+          menuSvg.src = originalSrc;
+        });
+      }
       btn.addEventListener('click', () => {
         if (target) goTo(target);
         document.body.classList.toggle('on-motion-project', target === 'project');
