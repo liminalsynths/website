@@ -1592,20 +1592,11 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   filter: invert(1);
 }
 @media (max-width: 768px) {
-  #photo-lightbox-close {
-    top: 73dvh;
-    left: 80%;
-    right: auto;
-    transform: translateX(-50%);
-  }
-  #photo-lightbox-close img {
-    width: 45px !important;
-    height: 45px !important;
-  }
+  #photo-lightbox-close { display: none !important; }
   #photo-lightbox img {
     max-width: 88vw;
-    max-height: 60vh;
-    margin-bottom: 15vh;
+    max-height: 80vh;
+    margin: 0;
   }
 }
 </style>
