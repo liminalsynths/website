@@ -455,6 +455,7 @@ html.is-touch a,
 html.is-touch img {
   cursor: auto !important;
 }
+* { -webkit-tap-highlight-color: transparent; }
 
 html.is-touch #customCursor{ display:none !important; }
 html.is-touch .detail-gallery-btn{ cursor: pointer; }
@@ -1314,7 +1315,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   }
   .applied-tabs {
     position: fixed !important;
-    bottom: 15% !important;
+    bottom: 13% !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
     order: unset !important;
@@ -1371,6 +1372,9 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
 @media (max-width: 768px) {
 
   /* --- Banner rotation for sirius & thread --- */
+  #project-banner-anka,
+  #project-banner-sirius,
+  #project-banner-thread { filter: brightness(0.5); }
   #project-banner-sirius,
   #project-banner-thread {
     inset: auto;
@@ -3457,6 +3461,77 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     if (saved && Array.from(tabs).some(function(t) { return t.getAttribute('data-tab') === saved; })) {
       activateTab(saved);
     }
+
+    // ── Mobile video: auto-hide UI on play + pause on scroll out ──
+    if (window.innerWidth <= 768 && videoGrid) {
+      var vimeoSDKLoaded = false;
+      var vimeoPlayers = [];
+      var hideTimer = null;
+
+      var uiEls = [
+        document.querySelector('#applied .applied-logo-card'),
+        document.querySelector('#applied .applied-tabs'),
+        document.querySelector('#applied .back-arrow')
+      ].filter(Boolean);
+
+      function hideUI() {
+        uiEls.forEach(function(el) { el.style.transition = 'opacity 0.4s'; el.style.opacity = '0'; el.style.pointerEvents = 'none'; });
+      }
+      function showUI() {
+        clearTimeout(hideTimer);
+        uiEls.forEach(function(el) { el.style.opacity = '1'; el.style.pointerEvents = ''; });
+      }
+
+      function initVimeoPlayers() {
+        if (vimeoSDKLoaded) return;
+        vimeoSDKLoaded = true;
+        var sdkScript = document.createElement('script');
+        sdkScript.src = 'https://player.vimeo.com/api/player.js';
+        sdkScript.onload = function() {
+          videoGrid.querySelectorAll('iframe').forEach(function(iframe) {
+            var p = new Vimeo.Player(iframe);
+            vimeoPlayers.push(p);
+            p.on('play', function() {
+              clearTimeout(hideTimer);
+              hideTimer = setTimeout(hideUI, 2000);
+            });
+            p.on('pause', showUI);
+            p.on('ended', showUI);
+          });
+
+          // Pause video when scrolled out of view
+          var appliedPage = document.getElementById('applied');
+          var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+              if (!entry.isIntersecting) {
+                var iframe = entry.target.querySelector('iframe');
+                if (!iframe) return;
+                var iframes = [...videoGrid.querySelectorAll('iframe')];
+                var idx = iframes.indexOf(iframe);
+                if (idx !== -1 && vimeoPlayers[idx]) vimeoPlayers[idx].pause();
+              }
+            });
+          }, { root: appliedPage, threshold: 0.3 });
+
+          videoGrid.querySelectorAll('.video-embed-wrap').forEach(function(wrap) {
+            observer.observe(wrap);
+          });
+        };
+        document.head.appendChild(sdkScript);
+      }
+
+      // Init when video tab first shown
+      var _origActivate = activateTab;
+      activateTab = function(selected) {
+        _origActivate(selected);
+        if (selected === 'video') initVimeoPlayers();
+        if (selected !== 'video') showUI();
+      };
+
+      // Tap or scroll to restore UI
+      document.getElementById('applied').addEventListener('touchstart', showUI, { passive: true });
+      document.getElementById('applied').addEventListener('scroll', showUI, { passive: true });
+    }
   })();
 
 
@@ -3495,6 +3570,39 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
       });
       logo.addEventListener('mouseleave', reset);
     });
+  })();
+
+  // ===== Mobile: auto-cycle banners + logo scale =====
+  if (window.innerWidth <= 768) (function() {
+    const keys = ['anka', 'sirius', 'thread'];
+    const banners = {
+      anka:   document.getElementById('project-banner-anka'),
+      sirius: document.getElementById('project-banner-sirius'),
+      thread: document.getElementById('project-banner-thread'),
+    };
+    const logoWraps = {};
+    keys.forEach(function(k) {
+      var el = document.querySelector('#project [data-banner="' + k + '"] .project-logo');
+      if (el) logoWraps[k] = el;
+    });
+
+    var idx = 0;
+
+    function step() {
+      var activeKey = keys[idx];
+      // banners
+      keys.forEach(function(k) {
+        if (banners[k]) banners[k].classList.toggle('active', k === activeKey);
+      });
+      // logos
+      keys.forEach(function(k) {
+        if (logoWraps[k]) logoWraps[k].style.transform = k === activeKey ? 'scale(1.02)' : 'scale(0.98)';
+      });
+      idx = (idx + 1) % keys.length;
+    }
+
+    step();
+    setInterval(step, 1000);
   })();
 
   // default landing, then restore from hash if present
