@@ -132,7 +132,8 @@ body, .page, .clickable, button, a, img { cursor: none; }
         .landing-footer-concept {
             font-size: 14px;
             left: 44px;
-            white-space: nowrap;
+            white-space: normal;
+            max-width: calc((100vw - min(720px, 80vw)) / 2 - 44px - 16px);
         }
         .landing-footer-bio {
             font-size: 11px;
@@ -496,7 +497,7 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
   .landing-footer-concept {
     font-size: 12px; white-space: normal;
     top: 47dvh; left: calc(10vw + 10px); right: 10vw;
-    bottom: auto;
+    bottom: auto; max-width: none;
   }
   .landing-footer-bio {
     font-size: 11px;
@@ -3334,9 +3335,27 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
     return vimeoPlayers[pid] || null;
   }
 
+  // ── Landing footer: push bio right if concept text overlaps ──
+  function adjustLandingBio() {
+    const concept = document.querySelector('#landing .landing-footer-concept');
+    const bio     = document.querySelector('#landing .landing-footer-bio');
+    if (!concept || !bio) return;
+    if (window.innerWidth <= 768) {
+      bio.style.left = '';
+      concept.style.maxWidth = '';
+      return;
+    }
+    const naturalLeft = (window.innerWidth - Math.min(720, window.innerWidth * 0.8)) / 2;
+    const conceptRight = concept.getBoundingClientRect().right;
+    bio.style.left = Math.max(naturalLeft, conceptRight + 16) + 'px';
+  }
+  window.addEventListener('resize', adjustLandingBio);
+  document.fonts.ready.then(adjustLandingBio);
+
   const origGoTo = window.goTo;
   window.goTo = function(pageId) {
     origGoTo(pageId);
+    if (pageId === 'landing') requestAnimationFrame(adjustLandingBio);
     document.body.classList.toggle('on-motion-project', pageId === 'project');
     document.body.classList.toggle('on-md-video-page', MD_PAGES.includes(pageId));
     // Pause all motion videos when leaving their pages
