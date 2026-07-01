@@ -3455,6 +3455,9 @@ html.is-touch .detail-gallery-btn{ cursor: pointer; }
       tabs.forEach(function(t) {
         if (t.getAttribute('data-tab') === selected) t.classList.add('active');
       });
+      // 切換分類時捲回頂端
+      var appliedPage = document.getElementById('applied');
+      if (appliedPage) appliedPage.scrollTop = 0;
       if (selected === 'banner') {
         if (clipWrap) clipWrap.style.display = 'none';
         if (bannerGrid) bannerGrid.classList.add('active');
